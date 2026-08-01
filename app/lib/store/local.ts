@@ -42,11 +42,21 @@ function keyPathFor(store: StoreName): "id" | "date" {
   return store === "protocolDays" ? "date" : "id";
 }
 
+/**
+ * Memoized cache keyed to the IDBFactory instance. When tests swap
+ * globalThis.indexedDB in beforeEach, the factory check automatically
+ * invalidates the cache, preserving isolation without test-only hooks.
+ */
+let cachedDb: { factory: IDBFactory; promise: Promise<IDBPDatabase> } | null = null;
+
 function openDatabase(): Promise<IDBPDatabase> {
-  // Opened fresh on every call rather than cached at module scope: caching a
-  // connection (or a rejected open promise) would keep pointing at a stale
-  // database after tests swap out globalThis.indexedDB for isolation.
-  return openDB(DB_NAME, DB_VERSION, {
+  // Reuse cached promise if it was opened against the current factory
+  if (cachedDb && cachedDb.factory === globalThis.indexedDB) {
+    return cachedDb.promise;
+  }
+
+  // Open a fresh database and cache it keyed to the current factory
+  const promise = openDB(DB_NAME, DB_VERSION, {
     upgrade(db) {
       if (!db.objectStoreNames.contains("plans")) {
         db.createObjectStore("plans", { keyPath: "id" });
@@ -60,6 +70,9 @@ function openDatabase(): Promise<IDBPDatabase> {
       }
     },
   });
+
+  cachedDb = { factory: globalThis.indexedDB, promise };
+  return promise;
 }
 
 function indexedDbBackend(db: IDBPDatabase): Backend {
@@ -126,6 +139,8 @@ async function backend(): Promise<Backend> {
     const db = await openDatabase();
     return indexedDbBackend(db);
   } catch {
+    // Clear the cache on rejection so a later call can retry opening
+    cachedDb = null;
     return memoryBackend;
   }
 }
