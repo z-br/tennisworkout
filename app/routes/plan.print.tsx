@@ -40,10 +40,14 @@ export function exerciseName(exerciseId: string): string {
   return getExercise(exerciseId)?.name ?? exerciseId;
 }
 
-/** Prefers sets×reps; falls back to targetSets×targetReps; omitted when neither pair is complete. */
+/** Renders dose label: sets×reps (or targets) if both; sets only if only sets; reps only if only reps; undefined if neither. */
 export function doseLabel(ex: PlanExercise): string | undefined {
   if (ex.sets !== undefined && ex.reps) return `${ex.sets}×${ex.reps}`;
   if (ex.targetSets !== undefined && ex.targetReps) return `${ex.targetSets}×${ex.targetReps}`;
+  if (ex.sets !== undefined) return `${ex.sets} sets`;
+  if (ex.targetSets !== undefined) return `${ex.targetSets} sets`;
+  if (ex.reps) return `${ex.reps}`;
+  if (ex.targetReps) return `${ex.targetReps}`;
   return undefined;
 }
 

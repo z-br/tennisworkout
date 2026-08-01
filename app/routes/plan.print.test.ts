@@ -24,9 +24,22 @@ describe("doseLabel", () => {
   it("prefers sets×reps over target when both present", () => {
     expect(doseLabel(ex({ sets: 2, reps: "8", targetSets: 3, targetReps: "10" }))).toBe("2×8");
   });
+  it("renders sets only as '${sets} sets'", () => {
+    expect(doseLabel(ex({ sets: 5 }))).toBe("5 sets");
+  });
+  it("renders reps only as '${reps}'", () => {
+    expect(doseLabel(ex({ reps: "20" }))).toBe("20");
+  });
+  it("prefers sets over targetSets when only sets is present", () => {
+    expect(doseLabel(ex({ sets: 3, targetSets: 4 }))).toBe("3 sets");
+  });
+  it("falls back to targetSets only as '${targetSets} sets'", () => {
+    expect(doseLabel(ex({ targetSets: 4 }))).toBe("4 sets");
+  });
+  it("falls back to targetReps only as '${targetReps}'", () => {
+    expect(doseLabel(ex({ targetReps: "15" }))).toBe("15");
+  });
   it("omits when neither pair is complete", () => {
-    expect(doseLabel(ex({ sets: 2 }))).toBeUndefined();
-    expect(doseLabel(ex({ targetSets: 3 }))).toBeUndefined();
     expect(doseLabel(ex({}))).toBeUndefined();
   });
 });
