@@ -1,3 +1,365 @@
-export default function PlanEdit() {
-  return null;
+import { useEffect, useRef, useState } from "react";
+import { Form, Link, redirect, useActionData } from "react-router";
+import type { Route } from "./+types/plan.edit";
+import { DayEditor, ExerciseRow, type Section } from "~/components/DayEditor";
+import { ExercisePicker } from "~/components/ExercisePicker";
+import { getPlan, savePlan, type StoredPlan } from "~/lib/store/local";
+import type { PlanDay, PlanDoc, PlanExercise } from "~/lib/plan/schema";
+import { publishPlan } from "~/lib/publish.server";
+
+export function meta() {
+  return [{ title: "Edit plan — Tennis Workout Builder" }];
+}
+
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  return getPlan(params.id);
+}
+clientLoader.hydrate = true as const;
+
+export async function action({ request }: Route.ActionArgs) {
+  const fd = await request.formData();
+  const doc = JSON.parse(String(fd.get("doc")));
+  const res = await publishPlan(doc, fd.get("remixOf") ? String(fd.get("remixOf")) : undefined);
+  if (res.ok) throw redirect(`/p/${res.slug}`);
+  return res;
+}
+
+type PickerTarget =
+  | { kind: "day-swap"; dayIndex: number; section: Section; exIndex: number; exerciseId: string }
+  | { kind: "day-add"; dayIndex: number; section: Section }
+  | { kind: "protocol-swap"; protocolIndex: number; itemIndex: number; exerciseId: string }
+  | { kind: "protocol-add"; protocolIndex: number };
+
+function PlanEditor({ plan }: { plan: StoredPlan }) {
+  const actionData = useActionData<typeof action>();
+  const [doc, setDoc] = useState<PlanDoc>(plan.doc);
+  const [saveState, setSaveState] = useState<"saved" | "saving">("saved");
+  const [picker, setPicker] = useState<PickerTarget | null>(null);
+
+  const skipInitialSave = useRef(true);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Autosave: every doc change (after the initial load) schedules a debounced
+  // save so edits aren't lost if the tab closes mid-edit.
+  useEffect(() => {
+    if (skipInitialSave.current) {
+      skipInitialSave.current = false;
+      return;
+    }
+    setSaveState("saving");
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      void savePlan({
+        id: plan.id,
+        doc,
+        createdAt: plan.createdAt,
+        updatedAt: new Date().toISOString(),
+        sourceSlug: plan.sourceSlug,
+        startedAt: plan.startedAt,
+      }).then(() => setSaveState("saved"));
+    }, 500);
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, [doc, plan.id, plan.createdAt, plan.sourceSlug, plan.startedAt]);
+
+  function updateMeta(patch: Partial<PlanDoc["meta"]>) {
+    setDoc((d) => ({ ...d, meta: { ...d.meta, ...patch } }));
+  }
+
+  function moveDay(index: number, dir: -1 | 1) {
+    setDoc((d) => {
+      const target = index + dir;
+      if (target < 0 || target >= d.days.length) return d;
+      const days = [...d.days];
+      [days[index], days[target]] = [days[target], days[index]];
+      return { ...d, days };
+    });
+  }
+
+  function updateDayField(index: number, patch: Partial<Pick<PlanDay, "label" | "focus">>) {
+    setDoc((d) => ({
+      ...d,
+      days: d.days.map((day, i) => (i === index ? { ...day, ...patch } : day)),
+    }));
+  }
+
+  function updateExercise(dayIndex: number, section: Section, exIndex: number, patch: Partial<PlanExercise>) {
+    setDoc((d) => ({
+      ...d,
+      days: d.days.map((day, i) => {
+        if (i !== dayIndex) return day;
+        const list = (day[section] ?? []).map((ex, j) => (j === exIndex ? { ...ex, ...patch } : ex));
+        return { ...day, [section]: list };
+      }),
+    }));
+  }
+
+  function removeExercise(dayIndex: number, section: Section, exIndex: number) {
+    setDoc((d) => ({
+      ...d,
+      days: d.days.map((day, i) => {
+        if (i !== dayIndex) return day;
+        const list = (day[section] ?? []).filter((_, j) => j !== exIndex);
+        return { ...day, [section]: list };
+      }),
+    }));
+  }
+
+  function addExerciseToDay(dayIndex: number, section: Section, exerciseId: string) {
+    setDoc((d) => ({
+      ...d,
+      days: d.days.map((day, i) => {
+        if (i !== dayIndex) return day;
+        const list = [...(day[section] ?? []), { exerciseId }];
+        return { ...day, [section]: list };
+      }),
+    }));
+  }
+
+  function addProtocolItem(protocolIndex: number, exerciseId: string) {
+    setDoc((d) => ({
+      ...d,
+      dailyProtocols: d.dailyProtocols.map((p, i) =>
+        i === protocolIndex ? { ...p, items: [...p.items, { exerciseId }] } : p,
+      ),
+    }));
+  }
+
+  function removeProtocolItem(protocolIndex: number, itemIndex: number) {
+    setDoc((d) => ({
+      ...d,
+      dailyProtocols: d.dailyProtocols.map((p, i) =>
+        i === protocolIndex ? { ...p, items: p.items.filter((_, j) => j !== itemIndex) } : p,
+      ),
+    }));
+  }
+
+  function updateProtocolItem(protocolIndex: number, itemIndex: number, patch: Partial<PlanExercise>) {
+    setDoc((d) => ({
+      ...d,
+      dailyProtocols: d.dailyProtocols.map((p, i) =>
+        i === protocolIndex
+          ? { ...p, items: p.items.map((it, j) => (j === itemIndex ? { ...it, ...patch } : it)) }
+          : p,
+      ),
+    }));
+  }
+
+  function handlePick(exerciseId: string) {
+    if (!picker) return;
+    switch (picker.kind) {
+      case "day-swap":
+        updateExercise(picker.dayIndex, picker.section, picker.exIndex, { exerciseId });
+        break;
+      case "day-add":
+        addExerciseToDay(picker.dayIndex, picker.section, exerciseId);
+        break;
+      case "protocol-swap":
+        updateProtocolItem(picker.protocolIndex, picker.itemIndex, { exerciseId });
+        break;
+      case "protocol-add":
+        addProtocolItem(picker.protocolIndex, exerciseId);
+        break;
+    }
+    setPicker(null);
+  }
+
+  function handlePublishSubmit() {
+    // Fire-and-forget: keep the local copy in sync even though we're about
+    // to navigate away on a successful publish.
+    void savePlan({
+      id: plan.id,
+      doc,
+      createdAt: plan.createdAt,
+      updatedAt: new Date().toISOString(),
+      sourceSlug: plan.sourceSlug,
+      startedAt: plan.startedAt,
+    });
+  }
+
+  const remixOf = plan.sourceSlug ?? doc.meta.remixOf;
+  const publishDoc: PlanDoc = remixOf ? { ...doc, meta: { ...doc.meta, remixOf } } : doc;
+
+  return (
+    <main className="mx-auto max-w-3xl px-4 pb-24 pt-8">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <Link to="/" className="text-sm text-gray-500 hover:underline dark:text-gray-400">
+          ← Back home
+        </Link>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            {saveState === "saving" ? "Saving…" : "Saved ✓"}
+          </span>
+          <Link
+            to={`/plan/${plan.id}/today`}
+            data-testid="start-today-link"
+            className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
+          >
+            Start today
+          </Link>
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <label htmlFor="plan-name" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Plan name
+        </label>
+        <input
+          id="plan-name"
+          type="text"
+          data-testid="plan-name-input"
+          value={doc.meta.name}
+          onChange={(e) => updateMeta({ name: e.target.value })}
+          className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-lg font-semibold text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+        />
+
+        <label
+          htmlFor="plan-description"
+          className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          Description
+        </label>
+        <textarea
+          id="plan-description"
+          value={doc.meta.description}
+          onChange={(e) => updateMeta({ description: e.target.value })}
+          rows={2}
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+        />
+      </div>
+
+      <section className="mb-10">
+        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">Days</h2>
+        <div className="space-y-6">
+          {doc.days.map((day, dayIndex) => (
+            <DayEditor
+              key={dayIndex}
+              day={day}
+              dayIndex={dayIndex}
+              isFirst={dayIndex === 0}
+              isLast={dayIndex === doc.days.length - 1}
+              onMoveUp={() => moveDay(dayIndex, -1)}
+              onMoveDown={() => moveDay(dayIndex, 1)}
+              onLabelChange={(label) => updateDayField(dayIndex, { label })}
+              onFocusChange={(focus) => updateDayField(dayIndex, { focus })}
+              onExerciseChange={(section, exIndex, patch) => updateExercise(dayIndex, section, exIndex, patch)}
+              onRemoveExercise={(section, exIndex) => removeExercise(dayIndex, section, exIndex)}
+              onSwapExercise={(section, exIndex, exerciseId) =>
+                setPicker({ kind: "day-swap", dayIndex, section, exIndex, exerciseId })
+              }
+              onAddExercise={(section) => setPicker({ kind: "day-add", dayIndex, section })}
+            />
+          ))}
+        </div>
+      </section>
+
+      {doc.dailyProtocols.length > 0 && (
+        <section className="mb-10">
+          <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">Daily protocols</h2>
+          <div className="space-y-6">
+            {doc.dailyProtocols.map((protocol, pIndex) => (
+              <div key={pIndex} className="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+                <h3 className="mb-1 font-medium text-gray-900 dark:text-gray-100">{protocol.name}</h3>
+                {protocol.cue && (
+                  <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">{protocol.cue}</p>
+                )}
+                <ul className="space-y-2">
+                  {protocol.items.map((item, iIndex) => (
+                    <ExerciseRow
+                      key={iIndex}
+                      exercise={item}
+                      onChange={(patch) => updateProtocolItem(pIndex, iIndex, patch)}
+                      onRemove={() => removeProtocolItem(pIndex, iIndex)}
+                      onSwap={() =>
+                        setPicker({
+                          kind: "protocol-swap",
+                          protocolIndex: pIndex,
+                          itemIndex: iIndex,
+                          exerciseId: item.exerciseId,
+                        })
+                      }
+                      removeDisabled={protocol.items.length <= 1}
+                    />
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  onClick={() => setPicker({ kind: "protocol-add", protocolIndex: pIndex })}
+                  className="mt-3 rounded-lg border border-dashed border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-500"
+                >
+                  + Add exercise
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {actionData && actionData.ok === false && (
+        <div className="mb-6 rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
+          <p className="mb-1 font-medium">Couldn't publish:</p>
+          <ul className="list-disc pl-5">
+            {actionData.errors.map((err, i) => (
+              <li key={i}>{err}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <Form
+        method="post"
+        onSubmit={handlePublishSubmit}
+        className="rounded-xl border border-gray-200 p-4 dark:border-gray-800"
+      >
+        <input type="hidden" name="doc" value={JSON.stringify(publishDoc)} />
+        {remixOf && <input type="hidden" name="remixOf" value={remixOf} />}
+        <button
+          type="submit"
+          data-testid="publish-btn"
+          className="rounded-full bg-gray-900 px-6 py-3 font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+        >
+          Publish & get share link
+        </button>
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          Published plans are public and can't be edited — publish again for a new version.
+        </p>
+      </Form>
+
+      {picker && (
+        <ExercisePicker
+          equipment={doc.meta.equipment}
+          currentExerciseId={
+            picker.kind === "day-swap" || picker.kind === "protocol-swap" ? picker.exerciseId : undefined
+          }
+          onSelect={handlePick}
+          onClose={() => setPicker(null)}
+        />
+      )}
+    </main>
+  );
+}
+
+export default function PlanEdit({ loaderData }: Route.ComponentProps) {
+  if (!loaderData) {
+    return (
+      <main className="mx-auto max-w-2xl px-4 pb-16 pt-16 text-center">
+        <h1 className="mb-3 text-2xl font-bold text-gray-900 dark:text-gray-100">
+          This plan isn't on this device
+        </h1>
+        <p className="mb-6 text-gray-600 dark:text-gray-400">
+          Plans are stored locally in your browser and don't sync between devices. If you built
+          this plan elsewhere, export it there and import the backup file here to bring it back.
+        </p>
+        <Link
+          to="/"
+          className="rounded-full bg-gray-900 px-6 py-3 font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+        >
+          Back home
+        </Link>
+      </main>
+    );
+  }
+
+  return <PlanEditor plan={loaderData} />;
 }
