@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="486" viewBox="0 0 380 486" font-family="Helvetica, Arial, sans-serif">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f9e6f"/><stop offset="1" stop-color="#247a55"/></linearGradient></defs>
+<rect x="0.5" y="0.5" width="379" height="485" rx="16" fill="#ffffff" stroke="#dfe6e0"/>
+<path d="M0,16 Q0,0 16,0 L364,0 Q380,0 380,16 L380,64 L0,64 Z" fill="url(#g)"/>
+<circle cx="28" cy="32" r="9" fill="#d4ee6a"/><path d="M21,26 Q28,32 21,38" stroke="#ffffff" stroke-width="1.4" fill="none" opacity="0.8"/><path d="M35,26 Q28,32 35,38" stroke="#ffffff" stroke-width="1.4" fill="none" opacity="0.8"/>
+<text x="46" y="30" fill="#ffffff" font-size="19" font-weight="700">Pre-Match Warm-Up</text>
+<text x="46" y="48" fill="#ffffff" font-size="10.5" letter-spacing="1" opacity="0.92">~5 MIN · ON COURT BEFORE PLAY</text>
+<circle cx="28" cy="86" r="12" fill="#2f9e6f"/>
+<text x="28" y="90" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">1</text>
+<text x="48" y="83" fill="#16241c" font-size="13.5" font-weight="700">Achilles pogos + easy skips</text>
+<text x="48" y="99" fill="#5d6b62" font-size="11">Raise HR, prime calves &amp; feet</text>
+<rect x="318" y="73" width="46" height="21" rx="10.5" fill="#eaf6f0"/>
+<text x="341" y="87" fill="#247a55" font-size="11.5" font-weight="700" text-anchor="middle">45s</text>
+<line x1="16" y1="110" x2="364" y2="110" stroke="#e8efe9"/>
+<circle cx="28" cy="132" r="12" fill="#2f9e6f"/>
+<text x="28" y="136" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">2</text>
+<text x="48" y="129" fill="#16241c" font-size="13.5" font-weight="700">Leg swings</text>
+<text x="48" y="145" fill="#5d6b62" font-size="11">Front-back ×10 + lateral ×10 each</text>
+<rect x="318" y="119" width="46" height="21" rx="10.5" fill="#eaf6f0"/>
+<text x="341" y="133" fill="#247a55" font-size="11.5" font-weight="700" text-anchor="middle">45s</text>
+<line x1="16" y1="156" x2="364" y2="156" stroke="#e8efe9"/>
+<circle cx="28" cy="178" r="12" fill="#2f9e6f"/>
+<text x="28" y="182" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">3</text>
+<text x="48" y="175" fill="#16241c" font-size="13.5" font-weight="700">Walking lunge + reach/rotate</text>
+<text x="48" y="191" fill="#5d6b62" font-size="11">4–5 each side, twist over front leg</text>
+<rect x="318" y="165" width="46" height="21" rx="10.5" fill="#eaf6f0"/>
+<text x="341" y="179" fill="#247a55" font-size="11.5" font-weight="700" text-anchor="middle">45s</text>
+<line x1="16" y1="202" x2="364" y2="202" stroke="#e8efe9"/>
+<circle cx="28" cy="224" r="12" fill="#2f9e6f"/>
+<text x="28" y="228" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">4</text>
+<text x="48" y="221" fill="#16241c" font-size="13.5" font-weight="700">Arm + wrist circles</text>
+<text x="48" y="237" fill="#5d6b62" font-size="11">Cross-body swings; wake the shoulder</text>
+<rect x="318" y="211" width="46" height="21" rx="10.5" fill="#eaf6f0"/>
+<text x="341" y="225" fill="#247a55" font-size="11.5" font-weight="700" text-anchor="middle">30s</text>
+<line x1="16" y1="248" x2="364" y2="248" stroke="#e8efe9"/>
+<circle cx="28" cy="270" r="12" fill="#e08a1e"/>
+<text x="28" y="274" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">5</text>
+<text x="48" y="267" fill="#16241c" font-size="13.5" font-weight="700">Forearm / elbow prep</text>
+<text x="48" y="283" fill="#5d6b62" font-size="11">Light yellow-FlexBar twists, wrist</text>
+<text x="48" y="297" fill="#5d6b62" font-size="11">circles, grip squeezes — NOT eccentrics</text>
+<rect x="318" y="257" width="46" height="21" rx="10.5" fill="#fbf0df"/>
+<text x="341" y="271" fill="#a5660f" font-size="11.5" font-weight="700" text-anchor="middle">30s</text>
+<line x1="16" y1="294" x2="364" y2="294" stroke="#e8efe9"/>
+<circle cx="28" cy="330" r="12" fill="#2f9e6f"/>
+<text x="28" y="334" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">6</text>
+<text x="48" y="327" fill="#16241c" font-size="13.5" font-weight="700">Shuffles + split steps + 2 sprints</text>
+<text x="48" y="343" fill="#5d6b62" font-size="11">Move in your playing planes</text>
+<rect x="318" y="317" width="46" height="21" rx="10.5" fill="#eaf6f0"/>
+<text x="341" y="331" fill="#247a55" font-size="11.5" font-weight="700" text-anchor="middle">45s</text>
+<line x1="16" y1="354" x2="364" y2="354" stroke="#e8efe9"/>
+<circle cx="28" cy="376" r="12" fill="#2f9e6f"/>
+<text x="28" y="380" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">7</text>
+<text x="48" y="373" fill="#16241c" font-size="13.5" font-weight="700">Shadow swings</text>
+<text x="48" y="389" fill="#5d6b62" font-size="11">5 FH · 5 BH · 5 serves — slow → full</text>
+<rect x="318" y="363" width="46" height="21" rx="10.5" fill="#eaf6f0"/>
+<text x="341" y="377" fill="#247a55" font-size="11.5" font-weight="700" text-anchor="middle">60s</text>
+<rect x="14" y="410" width="352" height="62" rx="9" fill="#f4faf6" stroke="#e3ebe5"/>
+<rect x="14" y="410" width="4" height="62" rx="2" fill="#2f9e6f"/>
+<text x="28" y="432" font-size="12" fill="#16241c"><tspan font-weight="700" fill="#247a55">Then warm-up hit:</tspan> build swing pace gradually —</text>
+<text x="28" y="450" font-size="12" fill="#16241c"><tspan font-weight="700">never first-ball-full-pace.</tspan> Your #1 elbow</text>
+<text x="28" y="466" font-size="12" fill="#16241c">protector.</text>
+</svg>

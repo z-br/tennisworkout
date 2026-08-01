@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tennis Workout — One Pager</title>
+<style>
+  :root{
+    --ink:#1a2230; --muted:#5d6b80; --line:#dde3ec; --paper:#fff;
+    --d1:#d64545; --d2:#2f7dc4; --d3:#e08a1e; --d4:#2f9e6f; --daily:#7a4fd0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:#eef1f5;padding:18px;}
+  .sheet{background:var(--paper);width:1040px;margin:0 auto;padding:20px 22px;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.08);}
+
+  header{display:flex;align-items:baseline;justify-content:space-between;border-bottom:3px solid var(--ink);padding-bottom:8px;margin-bottom:12px;}
+  header h1{font-size:22px;letter-spacing:.3px;}
+  header .meta{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+
+  /* daily strip */
+  .daily{display:flex;align-items:center;gap:14px;background:linear-gradient(0deg,#f5f0ff,#faf7ff);border:1.5px solid var(--daily);border-radius:7px;padding:9px 14px;margin-bottom:14px;}
+  .daily .tag{flex:0 0 auto;background:var(--daily);color:#fff;font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;padding:5px 9px;border-radius:5px;line-height:1.2;text-align:center;}
+  .daily .tag small{display:block;font-weight:500;font-size:9px;opacity:.85;}
+  .daily ul{list-style:none;display:flex;flex-wrap:wrap;gap:4px 20px;flex:1;}
+  .daily li{font-size:12px;white-space:nowrap;}
+  .daily li b{color:var(--daily);}
+  .daily .gate{flex:0 0 200px;font-size:10.5px;color:var(--muted);border-left:1px solid var(--line);padding-left:12px;}
+
+  /* day grid */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .day{border:1px solid var(--line);border-radius:7px;overflow:hidden;display:flex;flex-direction:column;}
+  .day h2{font-size:12.5px;color:#fff;padding:7px 10px;line-height:1.25;}
+  .day .focus{font-size:9.5px;font-weight:500;opacity:.92;display:block;text-transform:none;letter-spacing:0;}
+  .d1 h2{background:var(--d1);} .d2 h2{background:var(--d2);} .d3 h2{background:var(--d3);} .d4 h2{background:var(--d4);}
+  .day .warm{font-size:9.5px;color:var(--muted);padding:6px 10px;border-bottom:1px dashed var(--line);font-style:italic;}
+  .day ol{list-style:none;counter-reset:ex;padding:6px 10px 8px;flex:1;}
+  .day li{counter-increment:ex;font-size:11px;line-height:1.5;padding:2.5px 0 2.5px 18px;position:relative;border-bottom:1px solid #f1f4f8;}
+  .day li:last-child{border-bottom:none;}
+  .day li::before{content:counter(ex);position:absolute;left:0;top:3px;font-size:8.5px;font-weight:700;color:#fff;background:var(--muted);width:13px;height:13px;border-radius:50%;text-align:center;line-height:13px;}
+  .d1 li::before{background:var(--d1);} .d2 li::before{background:var(--d2);} .d3 li::before{background:var(--d3);} .d4 li::before{background:var(--d4);}
+  .day .dose{display:block;font-size:10px;color:var(--muted);font-weight:600;}
+  .day .fin{font-size:10px;background:#f6f8fb;border-top:1px solid var(--line);padding:6px 10px;color:var(--ink);}
+  .day .fin b{text-transform:uppercase;font-size:8.5px;letter-spacing:.5px;color:var(--muted);}
+
+  footer{display:flex;justify-content:space-between;align-items:center;margin-top:13px;border-top:1px solid var(--line);padding-top:8px;font-size:10px;color:var(--muted);gap:16px;}
+  footer .ramp b{color:var(--ink);}
+  footer .legend{text-align:right;}
+
+  @media print{
+    body{background:#fff;padding:0;}
+    .sheet{width:auto;box-shadow:none;border-radius:0;padding:0.35in;}
+    @page{size:landscape;margin:0.5in;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <h1>Dynamic Tennis Workout</h1>
+    <div class="meta">4 days/week · ~45 min · KB · TRX · DB · Bands · Bar</div>
+  </header>
+
+  <div class="daily">
+    <div class="tag">★ Daily<small>~7 min</small></div>
+    <ul>
+      <li><b>1.</b> Tyler Twist — 3×15</li>
+      <li><b>2.</b> Reverse Tyler Twist — 3×15</li>
+      <li><b>3.</b> Pronation/Supination — 2×15 ea</li>
+      <li><b>4.</b> Wrist Extensor Stretch — 3×30s</li>
+      <li><b>5.</b> Finger Extension band — 3×20</li>
+    </ul>
+    <div class="gate"><b>Symptom gate:</b> pain ≤3/10 &amp; no worse next morning → progress. Worse → hold or drop 20%.</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- DAY 1 -->
+    <div class="day d1">
+      <h2>Day 1<span class="focus">Lower Body Power + Lateral Quickness</span></h2>
+      <div class="warm">Warm-up 10 min: forearm prep, lateral shuffles, 90/90 work, band walks, split steps</div>
+      <ol>
+        <li>KB Swings <span class="dose">3×12 → 4×15</span></li>
+        <li>Bulgarian Split Squat <span class="dose">2×8 → 3×8 ea</span></li>
+        <li>Lateral Bounds (skater) <span class="dose">2×4 → 3×6 ea</span></li>
+        <li>TRX Squat + Jump <span class="dose">3 → 4 sets (3 slow + 1 jump)</span></li>
+        <li>Calf Raises (towel under toes) <span class="dose">3×10 ea · single-leg @ ~30 lb · slow 3-2-3</span></li>
+      </ol>
+      <div class="fin"><b>Finisher</b> · Agility ladder 3 → 5 rounds</div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="day d2">
+      <h2>Day 2<span class="focus">Upper Body Strength + Rotational Power</span></h2>
+      <div class="warm">Warm-up 10 min: band pull-aparts, shoulder CARs, arm swings, band external rotation</div>
+      <ol>
+        <li>Pull-Up Progression (band-assist) <span class="dose">2×5 → 3×6–8 · neutral/pronated · also 2–3×/wk light</span></li>
+        <li>1-Arm DB Row <span class="dose">2×10 → 3×10 ea</span></li>
+        <li>DB Shoulder Press <span class="dose">2×10 → 3×10</span></li>
+        <li>Med Ball Rotational Throw <span class="dose">3×6 → 4×8 ea</span></li>
+        <li>Hammer Curls (moderate) <span class="dose">2×8 → 3×8</span></li>
+        <li>AxisBoard Single-Leg Balance <span class="dose">2×20–30s ea → 45s / eyes closed</span></li>
+      </ol>
+    </div>
+
+    <!-- DAY 3 -->
+    <div class="day d3">
+      <h2>Day 3<span class="focus">Full Body Explosive + Agility</span></h2>
+      <div class="warm">Warm-up 10 min: forearm prep, fast feet, world's greatest stretch</div>
+      <ol>
+        <li>KB Clean + Press <span class="dose">2×5 → 3×5 ea</span></li>
+        <li>Broad Jump <span class="dose">2×4 → 4×5</span></li>
+        <li>Med Ball Overhead Slam <span class="dose">2×6 → 3×8</span></li>
+        <li>Push-Up (progress levels) <span class="dose">2×8 → 3×8</span></li>
+        <li>Lateral Shuffle + Split Step <span class="dose">3 rounds · Weeks 1–2 only</span></li>
+        <li>Calf Raises (towel under toes) <span class="dose">3×10 ea · single-leg @ ~30 lb · slow 3-2-3</span></li>
+      </ol>
+      <div class="fin"><b>Finisher (wk 3+, replaces #5)</b> · 3 rds: 10 swings · 5 broad jumps · 10 split steps</div>
+    </div>
+
+    <!-- DAY 4 -->
+    <div class="day d4">
+      <h2>Day 4<span class="focus">Core, Stability + Hip Mobility</span></h2>
+      <div class="warm">Warm-up 5 min: foam roll, cat-cow, thread the needle</div>
+      <ol>
+        <li>TRX Plank Variations <span class="dose">2×30s → 3×30s</span></li>
+        <li>Suitcase Carry <span class="dose">3×30–40s ea · heavy, relaxed grip</span></li>
+        <li>Band Chop (high → low) <span class="dose">3×12 ea</span></li>
+        <li>Pallof Press (kneeling) <span class="dose">3×12 ea</span></li>
+        <li>KB Windmill <span class="dose">3×5 ea</span></li>
+        <li>AxisBoard Single-Leg Balance <span class="dose">2×20–30s ea → 45s / eyes closed</span></li>
+        <li>Hip Mobility Circuit <span class="dose">×2 · 90/90, pigeon, adductor rock-back</span></li>
+      </ol>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="ramp"><b>Ramp:</b> first number = Weeks 1–2 start · second = Weeks 7–8 target. Add ~1 set/phase every 2 weeks. Deload 20% every 4th week.</div>
+    <div class="legend">Rest 1 day between sessions · Mon / Tue / Thu / Sat · "ea" = each side · Pull-ups: also practice 2–3×/wk light (grease the groove)</div>
+  </footer>
+
+</div>
+</body>
+</html>

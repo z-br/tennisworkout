@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pre-Match Warm-Up</title>
+<style>
+  :root{
+    --ink:#16241c; --muted:#5d6b62; --line:#e3ebe5;
+    --green:#2f9e6f; --green-d:#247a55; --chip:#eaf6f0; --warn:#e08a1e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#eef2ee;color:var(--ink);display:flex;justify-content:center;padding:14px;}
+  .card{width:380px;max-width:100%;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.1);}
+
+  header{background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;padding:16px 18px;}
+  header h1{font-size:19px;letter-spacing:.2px;display:flex;align-items:center;gap:7px;}
+  header .sub{font-size:12px;opacity:.9;margin-top:3px;letter-spacing:.5px;text-transform:uppercase;}
+
+  ol{list-style:none;counter-reset:step;padding:8px 14px 4px;}
+  li{counter-increment:step;display:flex;align-items:flex-start;gap:11px;padding:10px 2px;border-bottom:1px solid var(--line);}
+  li:last-child{border-bottom:none;}
+  li::before{content:counter(step);flex:0 0 24px;height:24px;background:var(--green);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .txt{flex:1;font-size:13.5px;line-height:1.35;}
+  .txt b{font-weight:700;}
+  .txt .d{display:block;font-size:11.5px;color:var(--muted);margin-top:1px;}
+  .time{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--green-d);background:var(--chip);padding:3px 8px;border-radius:20px;margin-top:1px;white-space:nowrap;}
+  .elbow::before{background:var(--warn);}
+  .elbow .time{color:#a5660f;background:#fbf0df;}
+
+  .key{margin:6px 14px 16px;background:#f4faf6;border:1px solid var(--line);border-left:4px solid var(--green);border-radius:8px;padding:11px 13px;font-size:12.5px;line-height:1.4;}
+  .key b{color:var(--green-d);}
+</style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <h1>🎾 Pre-Match Warm-Up</h1>
+      <div class="sub">~5 min · on court before play</div>
+    </header>
+
+    <ol>
+      <li><span class="txt"><b>Achilles pogos + easy skips</b><span class="d">Raise HR, prime calves &amp; feet</span></span><span class="time">45s</span></li>
+      <li><span class="txt"><b>Leg swings</b><span class="d">Front-back ×10 + lateral ×10 each</span></span><span class="time">45s</span></li>
+      <li><span class="txt"><b>Walking lunge + reach/rotate</b><span class="d">4–5 each side, twist over front leg</span></span><span class="time">45s</span></li>
+      <li><span class="txt"><b>Arm circles + cross-body swings + wrist rolls</b><span class="d">Wake the shoulder gently</span></span><span class="time">30s</span></li>
+      <li class="elbow"><span class="txt"><b>Forearm / elbow prep</b><span class="d">Wrist flex/extend; light <b>yellow</b> FlexBar twists (blood flow, NOT daily eccentrics); grip squeeze-and-spread</span></span><span class="time">30s</span></li>
+      <li><span class="txt"><b>Shuffles + 2 split steps + 2 short sprints</b><span class="d">Move in your playing planes</span></span><span class="time">45s</span></li>
+      <li><span class="txt"><b>Shadow swings</b><span class="d">5 FH · 5 BH · 5 serves — slow → full</span></span><span class="time">60s</span></li>
+    </ol>
+
+    <div class="key"><b>Then warm-up hit:</b> build swing pace gradually — <b>never first-ball-full-pace.</b> Your #1 on-court elbow protector.</div>
+  </div>
+</body>
+</html>
