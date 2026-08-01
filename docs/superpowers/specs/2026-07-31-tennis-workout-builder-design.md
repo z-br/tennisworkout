@@ -70,6 +70,13 @@ Curated, versioned data file in the repo (~80–120 entries at v1; seeded from G
 - **Ramp engine:** computes current week's doses from the phase table; prompts "gate stayed green?" before advancing phases.
 - **Progression ladders:** level-based exercises render as ladders with move-up criteria.
 
+### v1 simplifications
+
+Two bullets above ship narrower in v1 than described; both are post-v1 follow-ups, not open bugs:
+
+- **Ramp phase advancement** is calendar-week only — the phase table advances automatically off `startedAt` + elapsed weeks. There's no explicit "gate stayed green?" prompt gating the advance; the symptom gate still drives hold/drop-20% suggestions during a session, it just doesn't block moving to the next phase.
+- **Symptom gate input** is the during-session 0–10 pain slider only. The "worse next morning" follow-up input described for the gate is deferred; next-day soreness isn't captured or fed back into gate decisions yet.
+
 ## 7. Architecture
 
 - **React Router 7, framework mode** (precedent: The Rose Light on the same infra). SSR for `/`, `/p/:slug` (SEO + link previews); client-side interactivity for wizard/editor/companion.

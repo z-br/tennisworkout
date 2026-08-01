@@ -122,21 +122,67 @@ describe("logSession / getLogs", () => {
   it("returns an empty array for a plan with no logs", async () => {
     expect(await getLogs("nope")).toEqual([]);
   });
+
+  it("breaks ties on the same date by loggedAt ascending, missing loggedAt sorting first", async () => {
+    const noLoggedAt: SessionLog = {
+      id: "l1",
+      planId: "p1",
+      dayIndex: 0,
+      date: "2026-07-30",
+      entries: [],
+    };
+    const earlier: SessionLog = {
+      id: "l2",
+      planId: "p1",
+      dayIndex: 1,
+      date: "2026-07-30",
+      entries: [],
+      loggedAt: "2026-07-30T09:00:00.000Z",
+    };
+    const later: SessionLog = {
+      id: "l3",
+      planId: "p1",
+      dayIndex: 2,
+      date: "2026-07-30",
+      entries: [],
+      loggedAt: "2026-07-30T18:00:00.000Z",
+    };
+    // Insert out of order to prove sorting, not insertion order, decides.
+    await logSession(later);
+    await logSession(noLoggedAt);
+    await logSession(earlier);
+
+    const logs = await getLogs("p1");
+    expect(logs.map((l) => l.id)).toEqual(["l1", "l2", "l3"]);
+  });
 });
 
 describe("logProtocolDone / getProtocolDates", () => {
   it("records and returns protocol days", async () => {
-    await logProtocolDone("2026-07-30");
-    await logProtocolDone("2026-07-31");
-    const dates = await getProtocolDates();
+    await logProtocolDone("Elbow Protocol", "2026-07-30");
+    await logProtocolDone("Elbow Protocol", "2026-07-31");
+    const dates = await getProtocolDates("Elbow Protocol");
     expect(new Set(dates)).toEqual(new Set(["2026-07-30", "2026-07-31"]));
   });
 
   it("does not duplicate the same date logged twice", async () => {
-    await logProtocolDone("2026-07-30");
-    await logProtocolDone("2026-07-30");
-    const dates = await getProtocolDates();
+    await logProtocolDone("Elbow Protocol", "2026-07-30");
+    await logProtocolDone("Elbow Protocol", "2026-07-30");
+    const dates = await getProtocolDates("Elbow Protocol");
     expect(dates).toEqual(["2026-07-30"]);
+  });
+
+  it("keeps each protocol's days independent by protocol name", async () => {
+    await logProtocolDone("Elbow Protocol", "2026-07-30");
+    await logProtocolDone("Warm-up Routine", "2026-07-31");
+
+    expect(await getProtocolDates("Elbow Protocol")).toEqual(["2026-07-30"]);
+    expect(await getProtocolDates("Warm-up Routine")).toEqual(["2026-07-31"]);
+  });
+
+  it("returns an empty array for a protocol with no logged days", async () => {
+    await logProtocolDone("Elbow Protocol", "2026-07-30");
+    expect(await getProtocolDates("Other Protocol")).toEqual([]);
   });
 });
 
@@ -183,7 +229,7 @@ describe("export / import", () => {
     };
     await savePlan(plan);
     await logSession(log);
-    await logProtocolDone("2026-07-30");
+    await logProtocolDone("Elbow Protocol", "2026-07-30");
 
     const exported = await exportAll();
 
@@ -195,23 +241,26 @@ describe("export / import", () => {
 
     expect(await getPlan("p1")).toEqual(plan);
     expect(await getLogs("p1")).toEqual([log]);
-    expect(await getProtocolDates()).toEqual(["2026-07-30"]);
+    expect(await getProtocolDates("Elbow Protocol")).toEqual(["2026-07-30"]);
   });
 
   it("export produces valid JSON with the expected shape", async () => {
     await savePlan(makePlan("p1"));
+    await logProtocolDone("Elbow Protocol", "2026-07-30");
     const exported = await exportAll();
     const parsed = JSON.parse(exported);
-    expect(parsed.exportVersion).toBe(1);
+    expect(parsed.exportVersion).toBe(2);
     expect(parsed.plans).toHaveLength(1);
     expect(parsed.sessionLogs).toEqual([]);
-    expect(parsed.protocolDays).toEqual([]);
+    expect(parsed.protocolDays).toEqual([
+      { key: "Elbow Protocol|2026-07-30", protocolName: "Elbow Protocol", date: "2026-07-30" },
+    ]);
   });
 
   it("merges on import, overwriting existing plans by id", async () => {
     await savePlan(makePlan("p1", { updatedAt: "2026-07-01T00:00:00.000Z" }));
     const payload = JSON.stringify({
-      exportVersion: 1,
+      exportVersion: 2,
       plans: [makePlan("p1", { updatedAt: "2026-07-31T00:00:00.000Z" })],
       sessionLogs: [],
       protocolDays: [],
@@ -223,7 +272,7 @@ describe("export / import", () => {
 
   it("rejects a payload whose plan fails migratePlan, without writing anything", async () => {
     const badPayload = JSON.stringify({
-      exportVersion: 1,
+      exportVersion: 2,
       plans: [makePlan("bad", { doc: { ...doc, schemaVersion: 99 } as unknown as PlanDoc })],
       sessionLogs: [],
       protocolDays: [],
@@ -234,7 +283,7 @@ describe("export / import", () => {
 
   it("does not write any plans from a payload if one of several fails validation", async () => {
     const badPayload = JSON.stringify({
-      exportVersion: 1,
+      exportVersion: 2,
       plans: [
         makePlan("good", { updatedAt: "2026-07-01T00:00:00.000Z" }),
         makePlan("bad", { doc: { ...doc, schemaVersion: 99 } as unknown as PlanDoc }),
@@ -244,6 +293,17 @@ describe("export / import", () => {
     });
     await expect(importAll(badPayload)).rejects.toThrow();
     expect(await getPlan("good")).toBeUndefined();
+  });
+
+  it("maps a v1 backup's date-only protocolDays entries onto \"Daily Protocol\"", async () => {
+    const legacyPayload = JSON.stringify({
+      exportVersion: 1,
+      plans: [],
+      sessionLogs: [],
+      protocolDays: [{ date: "2026-07-30" }, { date: "2026-07-31" }],
+    });
+    await importAll(legacyPayload);
+    expect(await getProtocolDates("Daily Protocol")).toEqual(["2026-07-30", "2026-07-31"]);
   });
 });
 

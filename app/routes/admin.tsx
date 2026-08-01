@@ -3,6 +3,11 @@ import type { Route } from "./+types/admin";
 import { adminSetFlags, listAllForAdmin, type PublishedRow } from "~/lib/publish.server";
 
 type Op = "hide" | "unhide" | "feature" | "unfeature";
+const VALID_OPS: readonly Op[] = ["hide", "unhide", "feature", "unfeature"];
+
+function isValidOp(op: string): op is Op {
+  return (VALID_OPS as readonly string[]).includes(op);
+}
 
 function flagsForOp(op: Op): { hidden?: boolean; featured?: boolean } {
   switch (op) {
@@ -27,10 +32,14 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const slug = String(formData.get("slug") ?? "");
-  const op = String(formData.get("op") ?? "") as Op;
+  const opRaw = String(formData.get("op") ?? "");
   const token = String(formData.get("token") ?? "");
 
-  const ok = await adminSetFlags(slug, flagsForOp(op), token);
+  if (!isValidOp(opRaw)) {
+    return data("Bad request", { status: 400 });
+  }
+
+  const ok = await adminSetFlags(slug, flagsForOp(opRaw), token);
   if (!ok) return data({ ok: false }, { status: 403 });
   return { ok: true };
 }

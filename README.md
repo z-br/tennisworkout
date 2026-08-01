@@ -21,7 +21,7 @@ public links into a gallery — no login required.
 ## Data model
 
 - **Local-first**: plans, session logs, and streaks live in the browser via
-  IndexedDB (see `app/lib/local/`), with export/import to JSON so you can
+  IndexedDB (see `app/lib/store/local.ts`), with export/import to JSON so you can
   back up or move a plan between devices.
 - **Postgres** is used only for the publish/gallery/moderation surface —
   published plans, remix lineage, report counts. Nothing about your local

@@ -105,7 +105,10 @@ export async function loader({ params }: Route.LoaderArgs) {
     return new Response(new Uint8Array(png), {
       headers: {
         "Content-Type": "image/png",
-        "Cache-Control": "public, max-age=31536000, immutable",
+        // Not immutable/year-long: a plan can be hidden by moderation after
+        // its card has been cached, and the card must stop being served
+        // reasonably soon after that.
+        "Cache-Control": "public, max-age=86400",
       },
     });
   } catch (err) {
@@ -115,7 +118,10 @@ export async function loader({ params }: Route.LoaderArgs) {
     return new Response(svg, {
       headers: {
         "Content-Type": "image/svg+xml",
-        "Cache-Control": "public, max-age=31536000, immutable",
+        // Not immutable/year-long: a plan can be hidden by moderation after
+        // its card has been cached, and the card must stop being served
+        // reasonably soon after that.
+        "Cache-Control": "public, max-age=86400",
       },
     });
   }

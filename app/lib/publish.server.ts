@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid";
+import { z } from "zod";
 import { getSql } from "./db.server.ts";
 import { migratePlan, type PlanDoc, type Goal, type Equipment } from "./plan/schema.ts";
 import { moderationIssues } from "./moderation.ts";
@@ -49,6 +50,12 @@ export async function publishPlan(
   try {
     doc = migratePlan(json);
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      // Zod's default message ("Invalid input") isn't useful on its own —
+      // surface which field failed and why instead of the raw error.
+      const errors = err.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`);
+      return { ok: false, errors };
+    }
     return { ok: false, errors: [err instanceof Error ? err.message : String(err)] };
   }
 

@@ -82,6 +82,12 @@ function ExerciseCard({
       </div>
       {dose && <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">{dose}</p>}
       {meta?.cues && <p className="mb-2 text-sm text-gray-500 dark:text-gray-500">{meta.cues}</p>}
+      {meta?.levels && meta.levels.length > 0 && (
+        <p className="mb-2 text-xs text-gray-400 dark:text-gray-500">
+          Levels: {meta.levels.map((level, i) => `L${i + 1} ${level}`).join(" → ")} — Move up when 3×8
+          feels solid.
+        </p>
+      )}
       {lastActual && (
         <p className="mb-2 text-xs text-gray-400 dark:text-gray-500">Last: {lastActual}</p>
       )}
@@ -221,6 +227,7 @@ export function SessionRunner({
       dayIndex,
       date: today,
       entries,
+      loggedAt: new Date().toISOString(),
     };
 
     await logSession(log);

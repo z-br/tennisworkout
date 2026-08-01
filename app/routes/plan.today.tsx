@@ -22,8 +22,16 @@ export function meta() {
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const plan = await getPlan(params.id);
   if (!plan) return null;
-  const [logs, protocolDates] = await Promise.all([getLogs(plan.id), getProtocolDates()]);
-  return { plan, logs, protocolDates };
+  const protocolNames = plan.doc.dailyProtocols.map((p) => p.name);
+  const [logs, protocolDatesLists] = await Promise.all([
+    getLogs(plan.id),
+    Promise.all(protocolNames.map((name) => getProtocolDates(name))),
+  ]);
+  const protocolDatesByName: Record<string, string[]> = {};
+  protocolNames.forEach((name, i) => {
+    protocolDatesByName[name] = protocolDatesLists[i];
+  });
+  return { plan, logs, protocolDatesByName };
 }
 clientLoader.hydrate = true as const;
 
@@ -43,18 +51,18 @@ export function currentWeek(startedAt: string | undefined, today: string): numbe
 function PlanTodayScreen({
   plan,
   initialLogs,
-  initialProtocolDates,
+  initialProtocolDatesByName,
 }: {
   plan: StoredPlan;
   initialLogs: SessionLog[];
-  initialProtocolDates: string[];
+  initialProtocolDatesByName: Record<string, string[]>;
 }) {
   // Computed once per render — Date use is fine in the app, just not in lib logic.
   const today = new Date().toISOString().slice(0, 10);
 
   const [startedAt, setStartedAt] = useState(plan.startedAt);
   const [logs, setLogs] = useState(initialLogs);
-  const [protocolDates, setProtocolDates] = useState(initialProtocolDates);
+  const [protocolDatesByName, setProtocolDatesByName] = useState(initialProtocolDatesByName);
 
   // First visit anchors the ramp week to today.
   useEffect(() => {
@@ -69,12 +77,13 @@ function PlanTodayScreen({
   const dayIndex = nextDayIndex(logs, plan.doc.days.length);
   const day = plan.doc.days[dayIndex];
 
-  const isProtocolDoneToday = protocolDates.includes(today);
-  const streak = protocolStreak(protocolDates, today);
-
-  async function handleMarkProtocolDone() {
-    await logProtocolDone(today);
-    setProtocolDates((prev) => (prev.includes(today) ? prev : [...prev, today]));
+  async function handleMarkProtocolDone(protocolName: string) {
+    await logProtocolDone(protocolName, today);
+    setProtocolDatesByName((prev) => {
+      const existing = prev[protocolName] ?? [];
+      if (existing.includes(today)) return prev;
+      return { ...prev, [protocolName]: [...existing, today] };
+    });
   }
 
   function handleSessionLogged(log: SessionLog) {
@@ -108,15 +117,18 @@ function PlanTodayScreen({
       )}
 
       <div className="mt-6">
-        {plan.doc.dailyProtocols.map((protocol, i) => (
-          <ProtocolCard
-            key={i}
-            protocol={protocol}
-            isDoneToday={isProtocolDoneToday}
-            streak={streak}
-            onMarkDone={() => void handleMarkProtocolDone()}
-          />
-        ))}
+        {plan.doc.dailyProtocols.map((protocol, i) => {
+          const dates = protocolDatesByName[protocol.name] ?? [];
+          return (
+            <ProtocolCard
+              key={i}
+              protocol={protocol}
+              isDoneToday={dates.includes(today)}
+              streak={protocolStreak(dates, today)}
+              onMarkDone={() => void handleMarkProtocolDone(protocol.name)}
+            />
+          );
+        })}
 
         <SessionRunner
           planId={plan.id}
@@ -155,6 +167,8 @@ export default function PlanToday({ loaderData }: Route.ComponentProps) {
     );
   }
 
-  const { plan, logs, protocolDates } = loaderData;
-  return <PlanTodayScreen plan={plan} initialLogs={logs} initialProtocolDates={protocolDates} />;
+  const { plan, logs, protocolDatesByName } = loaderData;
+  return (
+    <PlanTodayScreen plan={plan} initialLogs={logs} initialProtocolDatesByName={protocolDatesByName} />
+  );
 }

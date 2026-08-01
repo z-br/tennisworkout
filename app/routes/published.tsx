@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { data, isRouteErrorResponse, Link, useFetcher, useNavigate, useRouteError } from "react-router";
 import type { Route } from "./+types/published";
 import { getExercise } from "~/lib/exercises/library";
@@ -7,7 +6,13 @@ import type { PlanDay, PlanExercise } from "~/lib/plan/schema";
 import { savePlan } from "~/lib/store/local";
 
 export async function loader({ params, request }: Route.LoaderArgs) {
-  const origin = new URL(request.url).origin;
+  const url = new URL(request.url);
+  // Behind a reverse proxy (Coolify/Cloudflare Tunnel) the request URL's
+  // protocol is whatever the proxy used internally (often http), not what
+  // the client actually connected with — honor x-forwarded-proto so the
+  // og:image URL doesn't point at an http origin.
+  const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  const origin = forwardedProto ? `${forwardedProto}://${url.host}` : url.origin;
 
   let row;
   try {
@@ -149,7 +154,6 @@ export default function Published({ loaderData }: Route.ComponentProps) {
   const { doc } = row;
   const navigate = useNavigate();
   const fetcher = useFetcher();
-  const [reported, setReported] = useState(false);
 
   async function handleRemix() {
     const id = await cloneAsRemix(row);
@@ -163,8 +167,11 @@ export default function Published({ loaderData }: Route.ComponentProps) {
 
   function handleReport() {
     fetcher.submit({ slug: row.slug }, { method: "post", action: "/api/report" });
-    setReported(true);
   }
+
+  const isReporting = fetcher.state !== "idle";
+  const reportSucceeded = fetcher.data?.ok === true;
+  const reportFailed = fetcher.data?.ok === false;
 
   return (
     <main className="mx-auto max-w-2xl px-4 pb-32 pt-8">
@@ -240,14 +247,21 @@ export default function Published({ loaderData }: Route.ComponentProps) {
           >
             Remix to print
           </button>
-          <button
-            type="button"
-            onClick={handleReport}
-            disabled={reported}
-            className="text-sm text-gray-500 hover:underline disabled:cursor-default disabled:no-underline disabled:opacity-60 dark:text-gray-400"
-          >
-            {reported ? "Thanks — reported" : "Report"}
-          </button>
+          <div className="flex flex-col items-start gap-1">
+            <button
+              type="button"
+              onClick={handleReport}
+              disabled={isReporting || reportSucceeded}
+              className="text-sm text-gray-500 hover:underline disabled:cursor-default disabled:no-underline disabled:opacity-60 dark:text-gray-400"
+            >
+              {reportSucceeded ? "Thanks — reported" : isReporting ? "Reporting…" : "Report"}
+            </button>
+            {reportFailed && (
+              <span className="text-xs text-red-600 dark:text-red-400">
+                Couldn't report — try again
+              </span>
+            )}
+          </div>
         </div>
       </header>
 

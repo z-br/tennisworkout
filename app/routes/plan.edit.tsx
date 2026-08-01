@@ -33,7 +33,8 @@ type PickerTarget =
   | { kind: "day-swap"; dayIndex: number; section: Section; exIndex: number; exerciseId: string }
   | { kind: "day-add"; dayIndex: number; section: Section }
   | { kind: "protocol-swap"; protocolIndex: number; itemIndex: number; exerciseId: string }
-  | { kind: "protocol-add"; protocolIndex: number };
+  | { kind: "protocol-add"; protocolIndex: number }
+  | { kind: "protocol-create"; name: string };
 
 function PlanEditor({ plan }: { plan: StoredPlan }) {
   const actionData = useActionData<typeof action>();
@@ -41,9 +42,16 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
   const [doc, setDoc] = useState<PlanDoc>(plan.doc);
   const [saveState, setSaveState] = useState<"saved" | "saving">("saved");
   const [picker, setPicker] = useState<PickerTarget | null>(null);
+  const [addingProtocol, setAddingProtocol] = useState(false);
+  const [newProtocolName, setNewProtocolName] = useState("");
 
   const skipInitialSave = useRef(true);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Mirrors `doc` on every render so the unmount-flush effect below (which
+  // only runs once, deps-free) can always read the latest value instead of
+  // a stale closure from its first render.
+  const docRef = useRef(doc);
+  docRef.current = doc;
 
   // Autosave: every doc change (after the initial load) schedules a debounced
   // save so edits aren't lost if the tab closes mid-edit.
@@ -55,6 +63,7 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
     setSaveState("saving");
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
+      saveTimer.current = null;
       void savePlan({
         id: plan.id,
         doc,
@@ -68,6 +77,30 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
   }, [doc, plan.id, plan.createdAt, plan.sourceSlug, plan.startedAt]);
+
+  // Flush a still-pending debounced save on unmount (e.g. navigating away
+  // right after an edit, before the 500ms debounce fires) instead of
+  // silently dropping it.
+  useEffect(() => {
+    return () => {
+      if (saveTimer.current) {
+        clearTimeout(saveTimer.current);
+        saveTimer.current = null;
+        void savePlan({
+          id: plan.id,
+          doc: docRef.current,
+          createdAt: plan.createdAt,
+          updatedAt: new Date().toISOString(),
+          sourceSlug: plan.sourceSlug,
+          startedAt: plan.startedAt,
+        });
+      }
+    };
+    // Deliberately empty deps: this must run its cleanup exactly once, on
+    // unmount — it reads the latest plan/doc via refs/closure-at-unmount,
+    // not via a dependency array that would re-fire it on every edit.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // On a successful publish, write the returned slug back into the local
   // plan (so a later publish links to this one as a new version) before
@@ -139,6 +172,20 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
     }));
   }
 
+  function addProtocol(name: string, exerciseId: string) {
+    setDoc((d) => ({
+      ...d,
+      dailyProtocols: [...d.dailyProtocols, { name, items: [{ exerciseId }] }],
+    }));
+  }
+
+  function removeProtocol(protocolIndex: number) {
+    setDoc((d) => ({
+      ...d,
+      dailyProtocols: d.dailyProtocols.filter((_, i) => i !== protocolIndex),
+    }));
+  }
+
   function addProtocolItem(protocolIndex: number, exerciseId: string) {
     setDoc((d) => ({
       ...d,
@@ -183,8 +230,34 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
       case "protocol-add":
         addProtocolItem(picker.protocolIndex, exerciseId);
         break;
+      case "protocol-create":
+        addProtocol(picker.name, exerciseId);
+        break;
     }
     setPicker(null);
+  }
+
+  function startAddProtocol() {
+    setAddingProtocol(true);
+    setNewProtocolName("");
+  }
+
+  function cancelAddProtocol() {
+    setAddingProtocol(false);
+    setNewProtocolName("");
+  }
+
+  // Schema requires dailyProtocols[].items to have at least one entry, so a
+  // brand-new protocol can't be created empty — open the picker for its
+  // first item immediately, and only actually create the protocol once one
+  // is chosen (handlePick's "protocol-create" case). Cancelling the picker
+  // leaves nothing behind.
+  function confirmAddProtocolName() {
+    const name = newProtocolName.trim();
+    if (!name) return;
+    setPicker({ kind: "protocol-create", name });
+    setAddingProtocol(false);
+    setNewProtocolName("");
   }
 
   function handlePublishSubmit() {
@@ -276,13 +349,22 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
         </div>
       </section>
 
-      {doc.dailyProtocols.length > 0 && (
-        <section className="mb-10">
-          <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">Daily protocols</h2>
+      <section className="mb-10">
+        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">Daily protocols</h2>
+        {doc.dailyProtocols.length > 0 && (
           <div className="space-y-6">
             {doc.dailyProtocols.map((protocol, pIndex) => (
               <div key={pIndex} className="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
-                <h3 className="mb-1 font-medium text-gray-900 dark:text-gray-100">{protocol.name}</h3>
+                <div className="mb-1 flex items-center justify-between gap-2">
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100">{protocol.name}</h3>
+                  <button
+                    type="button"
+                    onClick={() => removeProtocol(pIndex)}
+                    className="text-sm text-red-600 hover:underline dark:text-red-400"
+                  >
+                    Remove protocol
+                  </button>
+                </div>
                 {protocol.cue && (
                   <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">{protocol.cue}</p>
                 )}
@@ -315,8 +397,51 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
               </div>
             ))}
           </div>
-        </section>
-      )}
+        )}
+
+        {addingProtocol ? (
+          <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-gray-300 p-4 dark:border-gray-700">
+            <input
+              type="text"
+              value={newProtocolName}
+              onChange={(e) => setNewProtocolName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  confirmAddProtocolName();
+                }
+              }}
+              placeholder="Protocol name"
+              aria-label="New protocol name"
+              autoFocus
+              className="min-w-[10rem] flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+            />
+            <button
+              type="button"
+              onClick={confirmAddProtocolName}
+              disabled={!newProtocolName.trim()}
+              className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900"
+            >
+              Continue
+            </button>
+            <button
+              type="button"
+              onClick={cancelAddProtocol}
+              className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={startAddProtocol}
+            className="mt-4 rounded-lg border border-dashed border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-500"
+          >
+            + Add protocol
+          </button>
+        )}
+      </section>
 
       {actionData && actionData.ok === false && (
         <div className="mb-6 rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300">

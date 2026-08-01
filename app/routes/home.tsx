@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { Link, useSearchParams } from "react-router";
 import type { Route } from "./+types/home";
 import { PlanCard } from "~/components/PlanCard";
 import { listGallery, type PublishedRow } from "~/lib/publish.server";
 import { GOALS, EQUIPMENT, type Goal, type Equipment } from "~/lib/plan/schema";
-import { listPlans, type StoredPlan } from "~/lib/store/local";
+import { exportAll, importAll, listPlans, type StoredPlan } from "~/lib/store/local";
 
 const DAYS_PER_WEEK_OPTIONS = [1, 2, 3, 4, 5, 6, 7];
 
@@ -60,19 +60,54 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  const { plans } = loaderData;
+  const { plans, dbUnavailable } = loaderData;
   const [searchParams] = useSearchParams();
   const [yourPlans, setYourPlans] = useState<StoredPlan[]>([]);
+  const [importError, setImportError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    listPlans().then((stored) => {
-      if (!cancelled) setYourPlans(stored);
-    });
+    listPlans()
+      .then((stored) => {
+        if (!cancelled) setYourPlans(stored);
+      })
+      .catch(() => {
+        // listPlans only fails if IndexedDB itself is broken (not just
+        // unavailable — that degrades to the in-memory backend). Nothing
+        // useful to show the user; the plans list just stays empty.
+      });
     return () => {
       cancelled = true;
     };
   }, []);
+
+  async function handleExport() {
+    const json = await exportAll();
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const date = new Date().toISOString().slice(0, 10);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `tennisworkout-backup-${date}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  async function handleImportFile(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-importing the same filename later
+    if (!file) return;
+    setImportError(null);
+    try {
+      const text = await file.text();
+      await importAll(text);
+      setYourPlans(await listPlans());
+    } catch {
+      setImportError("Import failed — not a valid backup file");
+    }
+  }
 
   return (
     <main className="mx-auto max-w-5xl px-4 pb-16">
@@ -100,33 +135,58 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      {yourPlans.length > 0 && (
-        <section className="pb-12">
-          <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Your plans
-          </h2>
-          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {yourPlans.map((plan) => (
-              <li
-                key={plan.id}
-                className="flex items-center justify-between gap-2 rounded-xl border border-gray-200 p-4 dark:border-gray-800"
-              >
-                <Link to={`/plan/${plan.id}/today`} className="min-w-0 flex-1">
-                  <span className="block truncate font-medium text-gray-900 dark:text-gray-100">
-                    {plan.doc.meta.name}
-                  </span>
-                </Link>
-                <Link
-                  to={`/plan/${plan.id}/edit`}
-                  className="shrink-0 text-sm text-gray-500 hover:underline dark:text-gray-400"
+      <section className="pb-12">
+        {yourPlans.length > 0 && (
+          <>
+            <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Your plans
+            </h2>
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {yourPlans.map((plan) => (
+                <li
+                  key={plan.id}
+                  className="flex items-center justify-between gap-2 rounded-xl border border-gray-200 p-4 dark:border-gray-800"
                 >
-                  edit
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+                  <Link to={`/plan/${plan.id}/today`} className="min-w-0 flex-1">
+                    <span className="block truncate font-medium text-gray-900 dark:text-gray-100">
+                      {plan.doc.meta.name}
+                    </span>
+                  </Link>
+                  <Link
+                    to={`/plan/${plan.id}/edit`}
+                    className="shrink-0 text-sm text-gray-500 hover:underline dark:text-gray-400"
+                  >
+                    edit
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+          <span className="font-medium text-gray-700 dark:text-gray-300">Data:</span>
+          <button
+            type="button"
+            onClick={() => void handleExport()}
+            className="rounded-full border border-gray-300 px-3 py-1.5 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500"
+          >
+            Export data
+          </button>
+          <label className="cursor-pointer rounded-full border border-gray-300 px-3 py-1.5 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500">
+            Import data
+            <input
+              type="file"
+              accept="application/json"
+              onChange={(e) => void handleImportFile(e)}
+              className="hidden"
+            />
+          </label>
+        </div>
+        {importError && (
+          <p className="mt-2 text-sm text-red-600 dark:text-red-400">{importError}</p>
+        )}
+      </section>
 
       <section id="gallery" className="scroll-mt-8">
         <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -182,9 +242,15 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </form>
 
         {plans.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-500 dark:border-gray-700 dark:text-gray-400">
-            No shared plans yet — be the first to publish one.
-          </p>
+          dbUnavailable ? (
+            <p className="rounded-xl border border-amber-300 bg-amber-50 p-8 text-center text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+              Shared plans are temporarily unavailable.
+            </p>
+          ) : (
+            <p className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-500 dark:border-gray-700 dark:text-gray-400">
+              No shared plans yet — be the first to publish one.
+            </p>
+          )
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {plans.map((row) => (
