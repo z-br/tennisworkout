@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Form, Link, redirect, useActionData } from "react-router";
+import { Form, Link, useActionData, useNavigate } from "react-router";
 import type { Route } from "./+types/plan.edit";
 import { DayEditor, ExerciseRow, type Section } from "~/components/DayEditor";
 import { ExercisePicker } from "~/components/ExercisePicker";
@@ -18,9 +18,14 @@ clientLoader.hydrate = true as const;
 
 export async function action({ request }: Route.ActionArgs) {
   const fd = await request.formData();
-  const doc = JSON.parse(String(fd.get("doc")));
+  let doc: unknown;
+  try {
+    doc = JSON.parse(String(fd.get("doc")));
+  } catch {
+    return { ok: false as const, errors: ["Invalid plan payload — please retry"] };
+  }
   const res = await publishPlan(doc, fd.get("remixOf") ? String(fd.get("remixOf")) : undefined);
-  if (res.ok) throw redirect(`/p/${res.slug}`);
+  if (res.ok) return { ok: true as const, slug: res.slug };
   return res;
 }
 
@@ -32,6 +37,7 @@ type PickerTarget =
 
 function PlanEditor({ plan }: { plan: StoredPlan }) {
   const actionData = useActionData<typeof action>();
+  const navigate = useNavigate();
   const [doc, setDoc] = useState<PlanDoc>(plan.doc);
   const [saveState, setSaveState] = useState<"saved" | "saving">("saved");
   const [picker, setPicker] = useState<PickerTarget | null>(null);
@@ -62,6 +68,22 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
   }, [doc, plan.id, plan.createdAt, plan.sourceSlug, plan.startedAt]);
+
+  // On a successful publish, write the returned slug back into the local
+  // plan (so a later publish links to this one as a new version) before
+  // navigating to the published page.
+  useEffect(() => {
+    if (!actionData || actionData.ok !== true) return;
+    const slug = actionData.slug;
+    void savePlan({
+      id: plan.id,
+      doc,
+      createdAt: plan.createdAt,
+      updatedAt: new Date().toISOString(),
+      sourceSlug: slug,
+      startedAt: plan.startedAt,
+    }).then(() => navigate(`/p/${slug}`));
+  }, [actionData, doc, plan.id, plan.createdAt, plan.startedAt, navigate]);
 
   function updateMeta(patch: Partial<PlanDoc["meta"]>) {
     setDoc((d) => ({ ...d, meta: { ...d.meta, ...patch } }));
