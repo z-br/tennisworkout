@@ -9,6 +9,8 @@ export type PublishedRow = {
   createdAt: string;
   remixOf: string | null;
   remixCount: number;
+  reportCount: number;
+  hidden: boolean;
   featured: boolean;
 };
 
@@ -33,6 +35,8 @@ function toPublishedRow(row: Row): PublishedRow {
     createdAt: row.created_at.toISOString(),
     remixOf: row.remix_of,
     remixCount: row.remix_count,
+    reportCount: row.report_count,
+    hidden: row.hidden,
     featured: row.featured,
   };
 }
@@ -139,4 +143,17 @@ export async function adminSetFlags(
     WHERE slug = ${slug}
   `;
   return result.count > 0;
+}
+
+export async function listAllForAdmin(token: string): Promise<PublishedRow[] | null> {
+  if (token !== process.env.ADMIN_TOKEN) return null;
+
+  const sql = getSql();
+  const rows = await sql<Row[]>`
+    SELECT slug, doc, created_at, remix_of, remix_count, report_count, hidden, featured
+    FROM published_plans
+    ORDER BY created_at DESC
+    LIMIT 500
+  `;
+  return rows.map(toPublishedRow);
 }

@@ -12,6 +12,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("publish.server", () => {
   let listGallery: typeof import("./publish.server").listGallery;
   let reportPlan: typeof import("./publish.server").reportPlan;
   let adminSetFlags: typeof import("./publish.server").adminSetFlags;
+  let listAllForAdmin: typeof import("./publish.server").listAllForAdmin;
 
   const testDatabaseUrl = process.env.TEST_DATABASE_URL!;
 
@@ -60,9 +61,8 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("publish.server", () => {
     process.env.ADMIN_TOKEN = "test-admin-token";
 
     ({ getSql } = await import("./db.server"));
-    ({ publishPlan, getPublished, listGallery, reportPlan, adminSetFlags } = await import(
-      "./publish.server"
-    ));
+    ({ publishPlan, getPublished, listGallery, reportPlan, adminSetFlags, listAllForAdmin } =
+      await import("./publish.server"));
   });
 
   beforeEach(async () => {
@@ -202,5 +202,29 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("publish.server", () => {
     const rightTokenResult = await adminSetFlags(result.slug, { hidden: false }, "test-admin-token");
     expect(rightTokenResult).toBe(true);
     expect(await getPublished(result.slug)).not.toBeNull();
+  });
+
+  it("listAllForAdmin returns hidden rows with the right token", async () => {
+    const a = await publishPlan(basePlan());
+    const b = await publishPlan(basePlan());
+    if (!a.ok || !b.ok) throw new Error("publish failed");
+
+    await reportPlan(b.slug);
+    await reportPlan(b.slug);
+    await reportPlan(b.slug);
+    expect(await getPublished(b.slug)).toBeNull();
+
+    const rows = await listAllForAdmin("test-admin-token");
+    expect(rows).not.toBeNull();
+    const slugs = rows?.map((row) => row.slug) ?? [];
+    expect(slugs).toContain(a.slug);
+    expect(slugs).toContain(b.slug);
+  });
+
+  it("listAllForAdmin returns null with a wrong token", async () => {
+    const result = await publishPlan(basePlan());
+    if (!result.ok) throw new Error("publish failed");
+
+    expect(await listAllForAdmin("wrong-token")).toBeNull();
   });
 });
