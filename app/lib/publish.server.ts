@@ -132,7 +132,7 @@ export async function adminSetFlags(
   flags: { hidden?: boolean; featured?: boolean },
   token: string,
 ): Promise<boolean> {
-  if (token !== process.env.ADMIN_TOKEN) return false;
+  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) return false;
 
   const sql = getSql();
   const result = await sql`
@@ -146,7 +146,7 @@ export async function adminSetFlags(
 }
 
 export async function listAllForAdmin(token: string): Promise<PublishedRow[] | null> {
-  if (token !== process.env.ADMIN_TOKEN) return null;
+  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) return null;
 
   const sql = getSql();
   const rows = await sql<Row[]>`
