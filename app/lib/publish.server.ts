@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
-import { getSql } from "./db.server";
-import { migratePlan, type PlanDoc, type Goal, type Equipment } from "./plan/schema";
-import { moderationIssues } from "./moderation";
+import { getSql } from "./db.server.ts";
+import { migratePlan, type PlanDoc, type Goal, type Equipment } from "./plan/schema.ts";
+import { moderationIssues } from "./moderation.ts";
 
 export type PublishedRow = {
   slug: string;
