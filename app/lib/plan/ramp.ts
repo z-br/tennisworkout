@@ -1,4 +1,4 @@
-import { RampPhase, PlanExercise, InjuryConfig } from "./schema";
+import type { RampPhase, PlanExercise, InjuryConfig } from "./schema";
 
 /**
  * Find the phase containing the given week.
