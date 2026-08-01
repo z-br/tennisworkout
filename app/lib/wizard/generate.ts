@@ -109,14 +109,27 @@ export function fillSlot(
 
 /** Fallback so a day never ends up with zero main exercises: best no-equipment
  * exercise across the day's slot patterns, ignoring goal score (injury
- * exclusions still apply). */
-function fallbackForDay(slots: Pattern[], injuries: readonly InjuryFlag[]): Exercise | undefined {
+ * exclusions still apply). Respects plan-wide usedIds to avoid duplication. */
+function fallbackForDay(slots: Pattern[], injuries: readonly InjuryFlag[], usedIds: Set<string>): Exercise | undefined {
   const candidates = EXERCISES.filter(
+    (e) => slots.includes(e.pattern) && e.equipment.length === 0
+      && injuries.every((flag) => e.injuryLoad[flag] !== "high")
+      && !usedIds.has(e.id),
+  );
+  candidates.sort((a, b) => a.id.localeCompare(b.id));
+
+  if (candidates.length > 0) {
+    return candidates[0];
+  }
+
+  // Fallback: if all bodyweight candidates have been used elsewhere in the plan,
+  // pick an unfiltered one. A duplicate beats an empty day.
+  const unfiltered = EXERCISES.filter(
     (e) => slots.includes(e.pattern) && e.equipment.length === 0
       && injuries.every((flag) => e.injuryLoad[flag] !== "high"),
   );
-  candidates.sort((a, b) => a.id.localeCompare(b.id));
-  return candidates[0];
+  unfiltered.sort((a, b) => a.id.localeCompare(b.id));
+  return unfiltered[0];
 }
 
 // ─── Doses ─────────────────────────────────────────────────────────────────
@@ -207,7 +220,7 @@ export function generatePlan(input: WizardInput): PlanDoc {
     }
 
     if (main.length === 0) {
-      const fb = fallbackForDay(template.slots, injuries);
+      const fb = fallbackForDay(template.slots, injuries, usedIds);
       if (fb) {
         usedIds.add(fb.id);
         main.push({ exerciseId: fb.id, ...defaultDose(fb.pattern) });
