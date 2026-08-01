@@ -82,7 +82,13 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   }, []);
 
   async function handleExport() {
-    const json = await exportAll();
+    let json: string;
+    try {
+      json = await exportAll();
+    } catch {
+      setImportError("Export failed — couldn't read local data");
+      return;
+    }
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const date = new Date().toISOString().slice(0, 10);
