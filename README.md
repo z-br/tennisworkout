@@ -1,87 +1,88 @@
-# Welcome to React Router!
+# Tennis Workout Builder
 
-A modern, production-ready template for building full-stack React applications using React Router.
+A free, no-accounts tennis workout builder. Answer a few questions in a
+wizard, get a personalized multi-week strength/conditioning plan, and take it
+to the court from your phone. Plans can be remixed, printed, and shared via
+public links into a gallery — no login required.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## What it does
 
-## Features
+- **Wizard** — goals, equipment, injury flags, days/week → generates a
+  structured plan (warm-up, main sets, finisher) across weeks.
+- **Remix** — fork any plan (your own or a shared one) and tweak it.
+- **Companion mode** — phone-first "today's session" view with a rep/set
+  tracker and simple session logging.
+- **Printables** — a print-friendly plan view and a warm-up card.
+- **Share links + gallery** — publish a plan to get a public URL; published
+  plans appear in a browsable gallery with basic moderation (report/hide,
+  admin controls).
+- **No accounts.** Everything you build lives locally first.
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+## Data model
 
-## Getting Started
+- **Local-first**: plans, session logs, and streaks live in the browser via
+  IndexedDB (see `app/lib/local/`), with export/import to JSON so you can
+  back up or move a plan between devices.
+- **Postgres** is used only for the publish/gallery/moderation surface —
+  published plans, remix lineage, report counts. Nothing about your local
+  drafts or session history touches the server.
 
-### Installation
+## Stack
 
-Install the dependencies:
+- [React Router](https://reactrouter.com/) (framework mode, SSR) + TypeScript
+- Tailwind CSS v4
+- [Zod](https://zod.dev/) for schema validation (plan docs, forms, API input)
+- [postgres.js](https://github.com/porsager/postgres) for the publish/gallery DB
+- [idb](https://github.com/jakearchibald/idb) for local-first IndexedDB storage
+- Vitest (unit) + Playwright (end-to-end smoke)
+
+## Dev setup
 
 ```bash
 npm install
+npm run dev        # http://localhost:5173
 ```
 
-### Development
-
-Start the development server with HMR:
+Publish/gallery/admin routes need Postgres. Spin up a throwaway one and run
+migrations:
 
 ```bash
-npm run dev
+docker run --rm -d --name twdb -p 5434:5432 -e POSTGRES_PASSWORD=t postgres:16
+DATABASE_URL=postgres://postgres:t@localhost:5434/postgres npm run db:migrate
+DATABASE_URL=postgres://postgres:t@localhost:5434/postgres npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+`db:migrate` creates the `tennisworkout` schema and applies
+`migrations/*.sql`. Without `DATABASE_URL` set, the wizard/local/companion
+surfaces work fine; publish/gallery/admin routes will error.
 
-## Building for Production
-
-Create a production build:
+## Tests
 
 ```bash
-npm run build
+npx vitest run                     # unit tests (DB-backed ones skip without a DB)
+TEST_DATABASE_URL=postgres://postgres:t@localhost:5434/postgres npx vitest run   # full suite incl. DB tests
+npm run typecheck                  # react-router typegen + tsc
+
+# End-to-end smoke (needs Postgres with migrations applied, see playwright.config.ts):
+DATABASE_URL=postgres://postgres:t@localhost:5434/postgres npm run test:e2e
 ```
 
-## Deployment
+## Deploy
 
-### Docker Deployment
-
-To build and run using Docker:
+Runs on Coolify (Nixpacks build) at `https://tennis.zebraproject.org`.
+Environment: `DATABASE_URL` (Postgres, schema `tennisworkout`) and
+`ADMIN_TOKEN` (gates the admin/moderation routes). The `start` script runs
+migrations before booting the server (`npm run db:migrate && react-router-serve
+./build/server/index.js`), so deploys are self-migrating. After the first
+deploy, seed the gallery with the founding plan:
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+DATABASE_URL=... ADMIN_TOKEN=... node --experimental-strip-types scripts/seed-founding-plan.ts
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+## Source content
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+`Tennis_Workout_Plan.md`, `Tennis_Workout_OnePager.html`, and
+`PreMatch_Warmup_Card.html` at the repo root are the original hand-written
+plan documents this app was built from — they're the source material behind
+the seeded founding plan and exercise library, kept for reference.
