@@ -1,0 +1,41 @@
+{
+  "name": "tennisworkout",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "react-router build",
+    "dev": "react-router dev",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "db:migrate": "node --experimental-strip-types scripts/migrate.ts"
+  },
+  "dependencies": {
+    "@react-router/node": "^8",
+    "@react-router/serve": "^8",
+    "@resvg/resvg-js": "2.6.2",
+    "idb": "8.0.3",
+    "isbot": "^5.1.36",
+    "nanoid": "6.0.0",
+    "postgres": "3.4.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router": "^8",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "@react-router/dev": "^8",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/node": "^22",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "fake-indexeddb": "6.2.5",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.3",
+    "vite-tsconfig-paths": "6.1.1",
+    "vitest": "4.1.10"
+  }
+}
