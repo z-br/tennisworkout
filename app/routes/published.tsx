@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from "react";
 import { data, isRouteErrorResponse, Link, useFetcher, useNavigate, useRouteError } from "react-router";
 import type { Route } from "./+types/published";
 import { getExercise } from "~/lib/exercises/library";
@@ -149,11 +150,23 @@ async function cloneAsRemix(row: PublishedRow): Promise<string> {
   return id;
 }
 
+// False during SSR and hydration, true once React has attached event handlers.
+// The remix/report buttons write to IndexedDB / submit fetches — clicks before
+// hydration would silently no-op, so they stay disabled until this flips.
+function useHydrated() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}
+
 export default function Published({ loaderData }: Route.ComponentProps) {
   const { row } = loaderData;
   const { doc } = row;
   const navigate = useNavigate();
   const fetcher = useFetcher();
+  const hydrated = useHydrated();
 
   async function handleRemix() {
     const id = await cloneAsRemix(row);
@@ -234,16 +247,19 @@ export default function Published({ loaderData }: Route.ComponentProps) {
           <button
             type="button"
             data-testid="remix-btn"
+            disabled={!hydrated}
+            aria-busy={!hydrated}
             onClick={() => void handleRemix()}
-            className="rounded-full bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+            className="rounded-full bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700 disabled:cursor-wait disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
           >
-            Remix this plan
+            {hydrated ? "Remix this plan" : "Loading…"}
           </button>
           <button
             type="button"
+            disabled={!hydrated}
             onClick={() => void handleRemixToPrint()}
             title="Printables only work on your own local copy — this makes one for you, then opens the print view."
-            className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+            className="text-sm text-gray-500 hover:underline disabled:cursor-wait disabled:opacity-50 dark:text-gray-400"
           >
             Remix to print
           </button>
@@ -251,7 +267,7 @@ export default function Published({ loaderData }: Route.ComponentProps) {
             <button
               type="button"
               onClick={handleReport}
-              disabled={isReporting || reportSucceeded}
+              disabled={!hydrated || isReporting || reportSucceeded}
               className="text-sm text-gray-500 hover:underline disabled:cursor-default disabled:no-underline disabled:opacity-60 dark:text-gray-400"
             >
               {reportSucceeded ? "Thanks — reported" : isReporting ? "Reporting…" : "Report"}
