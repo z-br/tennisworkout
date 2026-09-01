@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Form, Link, useActionData, useNavigate } from "react-router";
 import type { Route } from "./+types/plan.edit";
 import { DayEditor, ExerciseRow, type Section } from "~/components/DayEditor";
+import { Icon } from "~/components/Icon";
 import { ExercisePicker } from "~/components/ExercisePicker";
 import { getPlan, savePlan, type StoredPlan } from "~/lib/store/local";
 import type { PlanDay, PlanDoc, PlanExercise } from "~/lib/plan/schema";
@@ -288,15 +289,17 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
           </span>
           <Link
             to={`/plan/${plan.id}/print`}
-            className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:underline dark:text-gray-400"
           >
+            <Icon name="print" />
             Print
           </Link>
           <Link
             to={`/plan/${plan.id}/today`}
             data-testid="start-today-link"
-            className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
+            className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
           >
+            <Icon name="play" size={13} />
             Start today
           </Link>
         </div>

@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { data, isRouteErrorResponse, Link, useFetcher, useNavigate, useRouteError } from "react-router";
+import { Icon } from "~/components/Icon";
 import type { Route } from "./+types/published";
 import { getExercise } from "~/lib/exercises/library";
 import { getPublished, type PublishedRow } from "~/lib/publish.server";
@@ -245,14 +246,16 @@ export default function Published({ loaderData }: Route.ComponentProps) {
             disabled={!hydrated}
             aria-busy={!hydrated}
             onClick={() => void handleRemix()}
-            className="rounded-full bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700 disabled:cursor-wait disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+            className="inline-flex items-center gap-2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700 disabled:cursor-wait disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
           >
+            <Icon name="remix" />
             {hydrated ? "Remix this plan" : "Loading…"}
           </button>
           <Link
             to={`/p/${row.slug}/print`}
-            className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:underline dark:text-gray-400"
           >
+            <Icon name="print" />
             Print
           </Link>
           <div className="flex flex-col items-start gap-1">
@@ -260,8 +263,9 @@ export default function Published({ loaderData }: Route.ComponentProps) {
               type="button"
               onClick={handleReport}
               disabled={!hydrated || isReporting || reportSucceeded}
-              className="text-sm text-gray-500 hover:underline disabled:cursor-default disabled:no-underline disabled:opacity-60 dark:text-gray-400"
+              className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:underline disabled:cursor-default disabled:no-underline disabled:opacity-60 dark:text-gray-400"
             >
+              <Icon name="flag" size={13} />
               {reportSucceeded ? "Thanks — reported" : isReporting ? "Reporting…" : "Report"}
             </button>
             {reportFailed && (

@@ -1,6 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Link, useSearchParams } from "react-router";
 import type { Route } from "./+types/home";
+import { Icon } from "~/components/Icon";
 import { PlanCard } from "~/components/PlanCard";
 import { listGallery, type PublishedRow } from "~/lib/publish.server";
 import { GOALS, EQUIPMENT, type Goal, type Equipment } from "~/lib/plan/schema";
@@ -160,14 +161,16 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   </Link>
                   <Link
                     to={`/plan/${plan.id}/edit`}
-                    className="shrink-0 text-sm text-gray-500 hover:underline dark:text-gray-400"
+                    className="inline-flex shrink-0 items-center gap-1 text-sm text-gray-500 hover:underline dark:text-gray-400"
                   >
+                    <Icon name="edit" size={13} />
                     edit
                   </Link>
                   <Link
                     to={`/plan/${plan.id}/print`}
-                    className="shrink-0 text-sm text-gray-500 hover:underline dark:text-gray-400"
+                    className="inline-flex shrink-0 items-center gap-1 text-sm text-gray-500 hover:underline dark:text-gray-400"
                   >
+                    <Icon name="print" size={13} />
                     print
                   </Link>
                 </li>
@@ -181,11 +184,13 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           <button
             type="button"
             onClick={() => void handleExport()}
-            className="rounded-full border border-gray-300 px-3 py-1.5 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500"
+            className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 px-3 py-1.5 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500"
           >
+            <Icon name="download" size={13} />
             Export data
           </button>
-          <label className="cursor-pointer rounded-full border border-gray-300 px-3 py-1.5 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500">
+          <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-gray-300 px-3 py-1.5 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500">
+            <Icon name="upload" size={13} />
             Import data
             <input
               type="file"
