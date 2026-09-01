@@ -251,30 +251,37 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           </div>
         )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-grass-700 dark:text-ivory-300">
-          <span className="font-medium">Data:</span>
-          <button
-            type="button"
-            onClick={() => void handleExport()}
-            className="inline-flex items-center gap-1.5 rounded-full border border-ivory-300 px-3 py-1.5 hover:border-grass-600 dark:border-grass-700 dark:hover:border-ivory-300"
-          >
-            <Icon name="download" size={13} />
-            Export data
-          </button>
-          <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-ivory-300 px-3 py-1.5 hover:border-grass-600 dark:border-grass-700 dark:hover:border-ivory-300">
-            <Icon name="upload" size={13} />
-            Import data
-            <input
-              type="file"
-              accept="application/json"
-              onChange={(e) => void handleImportFile(e)}
-              className="hidden"
-            />
-          </label>
-        </div>
-        {importError && (
-          <p className="mt-2 text-sm text-red-600 dark:text-red-400">{importError}</p>
-        )}
+        <details className="mt-4 text-sm text-grass-700 dark:text-ivory-300">
+          <summary className="cursor-pointer select-none text-xs text-grass-700/70 hover:text-grass-900 dark:text-ivory-300/60 dark:hover:text-ivory-100">
+            Advanced · backup &amp; device transfer
+          </summary>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => void handleExport()}
+              className="inline-flex items-center gap-1.5 rounded-full border border-ivory-300 px-3 py-1.5 hover:border-grass-600 dark:border-grass-700 dark:hover:border-ivory-300"
+            >
+              <Icon name="download" size={13} />
+              Export data
+            </button>
+            <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-ivory-300 px-3 py-1.5 hover:border-grass-600 dark:border-grass-700 dark:hover:border-ivory-300">
+              <Icon name="upload" size={13} />
+              Import data
+              <input
+                type="file"
+                accept="application/json"
+                onChange={(e) => void handleImportFile(e)}
+                className="hidden"
+              />
+            </label>
+            <span className="text-xs text-grass-700/70 dark:text-ivory-300/60">
+              Moves your plans &amp; history between devices as a JSON file.
+            </span>
+          </div>
+          {importError && (
+            <p className="mt-2 text-sm text-red-600 dark:text-red-400">{importError}</p>
+          )}
+        </details>
       </section>
 
       <section id="gallery" className="scroll-mt-8">
