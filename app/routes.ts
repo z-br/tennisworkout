@@ -7,6 +7,7 @@ export default [
   route("plan/:id/today", "routes/plan.today.tsx"),
   route("plan/:id/print", "routes/plan.print.tsx"),
   route("p/:slug", "routes/published.tsx"),
+  route("p/:slug/print", "routes/published-print.tsx"),
   route("p/:slug/card.png", "routes/published-card.tsx"),
   route("api/report", "routes/api.report.tsx"),
   route("admin", "routes/admin.tsx"),

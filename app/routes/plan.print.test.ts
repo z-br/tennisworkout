@@ -8,7 +8,7 @@ import {
   isWarmupProtocolName,
   rampSummary,
   warmupCardProtocol,
-} from "./plan.print";
+} from "~/components/PrintSheets";
 
 function ex(patch: Partial<PlanExercise>): PlanExercise {
   return { exerciseId: "x", ...patch };

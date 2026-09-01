@@ -173,11 +173,6 @@ export default function Published({ loaderData }: Route.ComponentProps) {
     navigate(`/plan/${id}/edit`);
   }
 
-  async function handleRemixToPrint() {
-    const id = await cloneAsRemix(row);
-    navigate(`/plan/${id}/print`);
-  }
-
   function handleReport() {
     fetcher.submit({ slug: row.slug }, { method: "post", action: "/api/report" });
   }
@@ -254,15 +249,12 @@ export default function Published({ loaderData }: Route.ComponentProps) {
           >
             {hydrated ? "Remix this plan" : "Loading…"}
           </button>
-          <button
-            type="button"
-            disabled={!hydrated}
-            onClick={() => void handleRemixToPrint()}
-            title="Printables only work on your own local copy — this makes one for you, then opens the print view."
-            className="text-sm text-gray-500 hover:underline disabled:cursor-wait disabled:opacity-50 dark:text-gray-400"
+          <Link
+            to={`/p/${row.slug}/print`}
+            className="text-sm text-gray-500 hover:underline dark:text-gray-400"
           >
-            Remix to print
-          </button>
+            Print
+          </Link>
           <div className="flex flex-col items-start gap-1">
             <button
               type="button"
