@@ -28,8 +28,8 @@ export function ExerciseRow({
   const name = meta?.name ?? exercise.exerciseId;
 
   return (
-    <li className="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 p-3 dark:border-gray-800">
-      <span className="min-w-[10rem] flex-1 font-medium text-gray-900 dark:text-gray-100">
+    <li className="flex flex-wrap items-center gap-2 rounded-lg border border-ivory-300 p-3 dark:border-grass-800">
+      <span className="min-w-[10rem] flex-1 font-medium text-grass-900 dark:text-ivory-100">
         {name}
       </span>
       <input
@@ -41,7 +41,7 @@ export function ExerciseRow({
         }
         placeholder="sets"
         aria-label={`${name} sets`}
-        className="w-16 rounded-lg border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+        className="w-16 rounded-lg border border-ivory-300 px-2 py-1 text-sm dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
       />
       <input
         type="text"
@@ -49,7 +49,7 @@ export function ExerciseRow({
         onChange={(e) => onChange({ reps: e.target.value || undefined })}
         placeholder="reps"
         aria-label={`${name} reps`}
-        className="w-24 rounded-lg border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+        className="w-24 rounded-lg border border-ivory-300 px-2 py-1 text-sm dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
       />
       <input
         type="text"
@@ -57,7 +57,7 @@ export function ExerciseRow({
         onChange={(e) => onChange({ note: e.target.value || undefined })}
         placeholder="note"
         aria-label={`${name} note`}
-        className="min-w-[8rem] flex-1 rounded-lg border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+        className="min-w-[8rem] flex-1 rounded-lg border border-ivory-300 px-2 py-1 text-sm dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
       />
       {meta?.video && (
         <a
@@ -65,7 +65,7 @@ export function ExerciseRow({
           target="_blank"
           rel="noreferrer"
           aria-label={`${name} video`}
-          className="px-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          className="px-1 text-grass-700 hover:text-grass-800 dark:text-ivory-300 dark:hover:text-ivory-100"
         >
           ↗
         </a>
@@ -74,7 +74,7 @@ export function ExerciseRow({
         type="button"
         onClick={onSwap}
         data-testid={swapTestId}
-        className="rounded-lg border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
+        className="rounded-lg border border-ivory-300 px-3 py-1 text-sm text-grass-800 hover:border-grass-600 dark:border-grass-700 dark:text-ivory-200 dark:hover:border-ivory-300"
       >
         Swap
       </button>
@@ -82,7 +82,7 @@ export function ExerciseRow({
         type="button"
         onClick={onRemove}
         disabled={removeDisabled}
-        className="rounded-lg border border-gray-300 px-3 py-1 text-sm text-red-600 hover:border-red-400 disabled:opacity-40 dark:border-gray-700 dark:text-red-400"
+        className="rounded-lg border border-ivory-300 px-3 py-1 text-sm text-red-600 hover:border-red-400 disabled:opacity-40 dark:border-grass-700 dark:text-red-400"
       >
         Remove
       </button>
@@ -120,7 +120,7 @@ export function DayEditor({
   let rowCounter = 0;
 
   return (
-    <div className="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+    <div className="rounded-xl border border-ivory-300 p-4 dark:border-grass-800">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="flex-1">
           <input
@@ -128,14 +128,14 @@ export function DayEditor({
             value={day.label}
             onChange={(e) => onLabelChange(e.target.value)}
             aria-label="Day label"
-            className="mb-1 w-full rounded-lg border border-gray-300 px-2 py-1 font-semibold text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+            className="mb-1 w-full rounded-lg border border-ivory-300 px-2 py-1 font-semibold text-grass-950 dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
           />
           <input
             type="text"
             value={day.focus}
             onChange={(e) => onFocusChange(e.target.value)}
             aria-label="Day focus"
-            className="w-full rounded-lg border border-gray-300 px-2 py-1 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400"
+            className="w-full rounded-lg border border-ivory-300 px-2 py-1 text-sm text-grass-800/90 dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-300"
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -144,7 +144,7 @@ export function DayEditor({
             onClick={onMoveUp}
             disabled={isFirst}
             aria-label="Move day up"
-            className="rounded-lg border border-gray-300 px-2 py-1 text-sm disabled:opacity-30 dark:border-gray-700"
+            className="rounded-lg border border-ivory-300 px-2 py-1 text-sm disabled:opacity-30 dark:border-grass-700"
           >
             ▲
           </button>
@@ -153,7 +153,7 @@ export function DayEditor({
             onClick={onMoveDown}
             disabled={isLast}
             aria-label="Move day down"
-            className="rounded-lg border border-gray-300 px-2 py-1 text-sm disabled:opacity-30 dark:border-gray-700"
+            className="rounded-lg border border-ivory-300 px-2 py-1 text-sm disabled:opacity-30 dark:border-grass-700"
           >
             ▼
           </button>
@@ -164,7 +164,7 @@ export function DayEditor({
         const list = day[key] ?? [];
         return (
           <div key={key} className="mb-4 last:mb-0">
-            <h4 className="mb-2 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">
+            <h4 className="mb-2 text-sm font-semibold uppercase text-grass-700 dark:text-ivory-300">
               {label}
             </h4>
             <ul className="space-y-2">
@@ -187,7 +187,7 @@ export function DayEditor({
             <button
               type="button"
               onClick={() => onAddExercise(key)}
-              className="mt-2 rounded-lg border border-dashed border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-500"
+              className="mt-2 rounded-lg border border-dashed border-ivory-300 px-3 py-1.5 text-sm text-grass-800/90 hover:border-grass-600 dark:border-grass-700 dark:text-ivory-300 dark:hover:border-ivory-300"
             >
               + Add exercise
             </button>

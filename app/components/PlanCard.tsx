@@ -15,19 +15,23 @@ export function PlanCard({ row }: { row: PublishedRow }) {
   return (
     <Link
       to={`/p/${slug}`}
-      className="block rounded-2xl border border-gray-200 p-4 hover:border-gray-400 hover:shadow-sm transition dark:border-gray-800 dark:hover:border-gray-600"
+      className="group block rounded-2xl border border-ivory-300 bg-white p-4 transition hover:-translate-y-0.5 hover:border-grass-600 hover:shadow-md dark:border-grass-800 dark:bg-grass-900 dark:hover:border-ivory-300"
     >
       <div className="flex items-start justify-between gap-2">
-        <h3 className="font-semibold text-gray-900 dark:text-gray-100">{name}</h3>
+        <h3 className="font-display text-lg font-semibold text-grass-900 dark:text-ivory-100">{name}</h3>
         {featured && (
-          <span className="shrink-0 text-amber-500" title="Featured" aria-label="Featured">
+          <span
+            className="shrink-0 rounded-full bg-optic-400 px-1.5 text-sm text-grass-950"
+            title="Featured"
+            aria-label="Featured"
+          >
             ★
           </span>
         )}
       </div>
 
       {description && (
-        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        <p className="mt-1 text-sm text-grass-800/80 dark:text-ivory-200/80">
           {excerpt(description, EXCERPT_LENGTH)}
         </p>
       )}
@@ -37,7 +41,7 @@ export function PlanCard({ row }: { row: PublishedRow }) {
           {goals.map((goal) => (
             <span
               key={goal}
-              className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+              className="rounded-full bg-court-100 px-2 py-0.5 text-xs font-medium text-court-700 dark:bg-court-700/30 dark:text-court-100"
             >
               {goal}
             </span>
@@ -45,7 +49,7 @@ export function PlanCard({ row }: { row: PublishedRow }) {
         </div>
       )}
 
-      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
+      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-grass-700 dark:text-ivory-300">
         <span>
           {equipment.length > 0 ? equipment.join(", ") : "no equipment"}
         </span>

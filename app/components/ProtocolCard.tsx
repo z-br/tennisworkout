@@ -18,21 +18,21 @@ export function ProtocolCard({
   const [checked, setChecked] = useState<Record<number, boolean>>({});
 
   return (
-    <section className="mb-6 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+    <section className="mb-6 rounded-xl border-[1.5px] border-violet-500/60 bg-white p-4 dark:border-violet-400/50 dark:bg-grass-900">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <h2 className="font-semibold text-gray-900 dark:text-gray-100">{protocol.name}</h2>
+        <h2 className="font-semibold text-grass-900 dark:text-ivory-100">{protocol.name}</h2>
         {streak >= 1 && (
-          <span className="text-sm text-gray-600 dark:text-gray-400">🔥 {streak}-day streak</span>
+          <span className="rounded-full bg-optic-400 px-2.5 py-0.5 text-sm font-semibold text-grass-950">🔥 {streak}-day streak</span>
         )}
       </div>
-      {protocol.cue && <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">{protocol.cue}</p>}
+      {protocol.cue && <p className="mb-3 text-sm text-grass-700 dark:text-ivory-300">{protocol.cue}</p>}
 
       <ul className="mb-3 space-y-2">
         {protocol.items.map((item, i) => {
           const meta = getExercise(item.exerciseId);
           const name = meta?.name ?? item.exerciseId;
           return (
-            <li key={i} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <li key={i} className="flex items-center gap-2 text-sm text-grass-800 dark:text-ivory-200">
               <input
                 type="checkbox"
                 checked={!!checked[i]}
@@ -40,7 +40,7 @@ export function ProtocolCard({
                 aria-label={name}
                 className="h-4 w-4"
               />
-              <span className={checked[i] ? "text-gray-400 line-through dark:text-gray-600" : ""}>
+              <span className={checked[i] ? "text-grass-700/60 line-through dark:text-grass-800/90" : ""}>
                 {name}
               </span>
               {meta?.video && (
@@ -49,7 +49,7 @@ export function ProtocolCard({
                   target="_blank"
                   rel="noreferrer"
                   aria-label={`${name} video`}
-                  className="ml-auto text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="ml-auto text-grass-700/60 hover:text-grass-800/90 dark:hover:text-ivory-100"
                 >
                   ↗
                 </a>
@@ -64,7 +64,7 @@ export function ProtocolCard({
         onClick={onMarkDone}
         disabled={isDoneToday}
         data-testid="protocol-done-btn"
-        className="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900"
+        className="rounded-full bg-grass-900 px-4 py-2 text-sm font-medium text-ivory-50 disabled:opacity-50 dark:bg-ivory-200 dark:text-grass-950"
       >
         {isDoneToday ? "Done ✓" : "Done today"}
       </button>

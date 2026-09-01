@@ -93,24 +93,24 @@ function PlanTodayScreen({
   return (
     <main className="mx-auto max-w-xl px-4 pb-32 pt-8">
       <div className="mb-6 flex items-center justify-between gap-3">
-        <Link to="/" className="text-sm text-gray-500 hover:underline dark:text-gray-400">
+        <Link to="/" className="text-sm text-grass-700 hover:underline dark:text-ivory-300">
           ← Back home
         </Link>
         <Link
           to={`/plan/${plan.id}/edit`}
-          className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+          className="text-sm text-grass-700 hover:underline dark:text-ivory-300"
         >
           Edit plan
         </Link>
       </div>
 
-      <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <h1 className="mb-2 text-2xl font-bold text-grass-900 dark:text-ivory-100">
         {plan.doc.meta.name}
       </h1>
       {plan.doc.ramp && phase && (
         <span
           data-testid="week-chip"
-          className="mb-6 inline-block rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+          className="mb-6 inline-block rounded-full bg-ivory-200 px-3 py-1 text-sm font-medium text-grass-800 dark:bg-grass-800 dark:text-ivory-200"
         >
           Week {week} — {phase.name} ({phase.pct}%)
         </span>
@@ -150,16 +150,16 @@ export default function PlanToday({ loaderData }: Route.ComponentProps) {
   if (!loaderData) {
     return (
       <main className="mx-auto max-w-2xl px-4 pb-16 pt-16 text-center">
-        <h1 className="mb-3 text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="mb-3 text-2xl font-bold text-grass-900 dark:text-ivory-100">
           This plan isn't on this device
         </h1>
-        <p className="mb-6 text-gray-600 dark:text-gray-400">
+        <p className="mb-6 text-grass-800/80 dark:text-ivory-200/80">
           Plans are stored locally in your browser and don't sync between devices. If you built
           this plan elsewhere, export it there and import the backup file here to bring it back.
         </p>
         <Link
           to="/"
-          className="rounded-full bg-gray-900 px-6 py-3 font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+          className="rounded-full bg-grass-900 px-6 py-3 font-semibold text-ivory-50 hover:bg-grass-700 dark:bg-optic-400 dark:text-grass-950 dark:hover:bg-optic-300"
         >
           Back home
         </Link>

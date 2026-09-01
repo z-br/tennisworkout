@@ -54,17 +54,17 @@ export function ErrorBoundary() {
 
   return (
     <main className="mx-auto max-w-md px-4 pb-16 pt-24 text-center">
-      <h1 className="mb-3 text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <h1 className="mb-3 text-2xl font-bold text-grass-900 dark:text-ivory-100">
         {isNotFound ? "Plan not found" : "Unavailable right now"}
       </h1>
-      <p className="mb-6 text-gray-600 dark:text-gray-400">
+      <p className="mb-6 text-grass-800/80 dark:text-ivory-200/80">
         {isNotFound
           ? "This plan doesn't exist, or it's no longer public."
           : "We couldn't load this plan. Please try again in a moment."}
       </p>
       <Link
         to="/"
-        className="rounded-full bg-gray-900 px-6 py-3 font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+        className="rounded-full bg-grass-900 px-6 py-3 font-semibold text-ivory-50 hover:bg-grass-700 dark:bg-optic-400 dark:text-grass-950 dark:hover:bg-optic-300"
       >
         Back home
       </Link>
@@ -89,20 +89,20 @@ function PlanExerciseItem({ ex }: { ex: PlanExercise }) {
   return (
     <li className="py-1.5">
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <span className="font-medium text-gray-900 dark:text-gray-100">{name}</span>
-        {dose && <span className="text-sm text-gray-500 dark:text-gray-400">{dose}</span>}
+        <span className="font-medium text-grass-900 dark:text-ivory-100">{name}</span>
+        {dose && <span className="text-sm text-grass-700 dark:text-ivory-300">{dose}</span>}
         {exercise?.video && (
           <a
             href={exercise.video}
             target="_blank"
             rel="noreferrer"
-            className="text-sm text-emerald-600 hover:underline dark:text-emerald-400"
+            className="text-sm text-court-600 hover:underline dark:text-court-100"
           >
             ▶ video
           </a>
         )}
       </div>
-      {ex.note && <p className="text-sm text-gray-600 dark:text-gray-400">{ex.note}</p>}
+      {ex.note && <p className="text-sm text-grass-800/80 dark:text-ivory-200/80">{ex.note}</p>}
     </li>
   );
 }
@@ -111,10 +111,10 @@ function ExerciseGroup({ title, items }: { title: string; items: PlanExercise[] 
   if (items.length === 0) return null;
   return (
     <div className="mt-3">
-      <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+      <h4 className="text-xs font-semibold uppercase tracking-wide text-grass-700 dark:text-ivory-300">
         {title}
       </h4>
-      <ul className="mt-1 divide-y divide-gray-100 dark:divide-gray-800">
+      <ul className="mt-1 divide-y divide-ivory-200 dark:divide-grass-800">
         {items.map((ex, i) => (
           <PlanExerciseItem key={i} ex={ex} />
         ))}
@@ -125,9 +125,9 @@ function ExerciseGroup({ title, items }: { title: string; items: PlanExercise[] 
 
 function DaySection({ day }: { day: PlanDay }) {
   return (
-    <section className="mb-6 rounded-2xl border border-gray-200 p-5 dark:border-gray-800">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{day.label}</h3>
-      {day.focus && <p className="text-sm text-gray-500 dark:text-gray-400">{day.focus}</p>}
+    <section className="mb-6 rounded-2xl border border-ivory-300 p-5 dark:border-grass-800">
+      <h3 className="text-lg font-semibold text-grass-900 dark:text-ivory-100">{day.label}</h3>
+      {day.focus && <p className="text-sm text-grass-700 dark:text-ivory-300">{day.focus}</p>}
       <ExerciseGroup title="Warm-up" items={day.warmup} />
       <ExerciseGroup title="Main" items={day.main} />
       <ExerciseGroup title="Finisher" items={day.finisher ?? []} />
@@ -184,22 +184,26 @@ export default function Published({ loaderData }: Route.ComponentProps) {
 
   return (
     <main className="mx-auto max-w-2xl px-4 pb-32 pt-8">
-      <Link to="/" className="text-sm text-gray-500 hover:underline dark:text-gray-400">
+      <Link to="/" className="text-sm text-grass-700 hover:underline dark:text-ivory-300">
         ← Back home
       </Link>
 
       <header className="mt-4 mb-8">
         <div className="flex items-start justify-between gap-3">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{doc.meta.name}</h1>
+          <h1 className="font-display text-3xl font-semibold text-grass-900 dark:text-ivory-100">{doc.meta.name}</h1>
           {row.featured && (
-            <span className="shrink-0 text-amber-500" title="Featured" aria-label="Featured">
+            <span
+              className="shrink-0 rounded-full bg-optic-400 px-1.5 text-sm text-grass-950"
+              title="Featured"
+              aria-label="Featured"
+            >
               ★
             </span>
           )}
         </div>
 
         {doc.meta.description && (
-          <p className="mt-2 text-gray-600 dark:text-gray-400">{doc.meta.description}</p>
+          <p className="mt-2 text-grass-800/80 dark:text-ivory-200/80">{doc.meta.description}</p>
         )}
 
         {doc.meta.goals.length > 0 && (
@@ -207,7 +211,7 @@ export default function Published({ loaderData }: Route.ComponentProps) {
             {doc.meta.goals.map((goal) => (
               <span
                 key={goal}
-                className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                className="rounded-full bg-court-100 px-2 py-0.5 text-xs font-medium text-court-700 dark:bg-court-700/30 dark:text-court-100"
               >
                 {goal}
               </span>
@@ -215,7 +219,7 @@ export default function Published({ loaderData }: Route.ComponentProps) {
           </div>
         )}
 
-        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-grass-700 dark:text-ivory-300">
           <span>{doc.meta.equipment.length > 0 ? doc.meta.equipment.join(", ") : "no equipment"}</span>
           <span>·</span>
           <span>
@@ -228,11 +232,11 @@ export default function Published({ loaderData }: Route.ComponentProps) {
         </div>
 
         {row.remixOf && (
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-2 text-sm text-grass-700 dark:text-ivory-300">
             Remixed from{" "}
             <Link
               to={`/p/${row.remixOf}`}
-              className="text-emerald-600 hover:underline dark:text-emerald-400"
+              className="text-court-600 hover:underline dark:text-court-100"
             >
               {row.remixOf}
             </Link>
@@ -246,14 +250,14 @@ export default function Published({ loaderData }: Route.ComponentProps) {
             disabled={!hydrated}
             aria-busy={!hydrated}
             onClick={() => void handleRemix()}
-            className="inline-flex items-center gap-2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700 disabled:cursor-wait disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+            className="inline-flex items-center gap-2 rounded-full bg-grass-900 px-5 py-2.5 text-sm font-semibold text-ivory-50 hover:bg-grass-700 disabled:cursor-wait disabled:opacity-50 dark:bg-optic-400 dark:text-grass-950 dark:hover:bg-optic-300"
           >
             <Icon name="remix" />
             {hydrated ? "Remix this plan" : "Loading…"}
           </button>
           <Link
             to={`/p/${row.slug}/print`}
-            className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:underline dark:text-gray-400"
+            className="inline-flex items-center gap-1.5 text-sm text-grass-700 hover:underline dark:text-ivory-300"
           >
             <Icon name="print" />
             Print
@@ -263,7 +267,7 @@ export default function Published({ loaderData }: Route.ComponentProps) {
               type="button"
               onClick={handleReport}
               disabled={!hydrated || isReporting || reportSucceeded}
-              className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:underline disabled:cursor-default disabled:no-underline disabled:opacity-60 dark:text-gray-400"
+              className="inline-flex items-center gap-1.5 text-sm text-grass-700 hover:underline disabled:cursor-default disabled:no-underline disabled:opacity-60 dark:text-ivory-300"
             >
               <Icon name="flag" size={13} />
               {reportSucceeded ? "Thanks — reported" : isReporting ? "Reporting…" : "Report"}
@@ -278,7 +282,7 @@ export default function Published({ loaderData }: Route.ComponentProps) {
       </header>
 
       <section>
-        <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-gray-100">Days</h2>
+        <h2 className="mb-3 text-xl font-semibold text-grass-900 dark:text-ivory-100">Days</h2>
         {doc.days.map((day, i) => (
           <DaySection key={i} day={day} />
         ))}
@@ -286,16 +290,16 @@ export default function Published({ loaderData }: Route.ComponentProps) {
 
       {doc.dailyProtocols.length > 0 && (
         <section className="mb-8">
-          <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="mb-3 text-xl font-semibold text-grass-900 dark:text-ivory-100">
             Daily protocols
           </h2>
           {doc.dailyProtocols.map((protocol, i) => (
-            <div key={i} className="mb-4 rounded-2xl border border-gray-200 p-5 dark:border-gray-800">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div key={i} className="mb-4 rounded-2xl border border-ivory-300 p-5 dark:border-grass-800">
+              <h3 className="text-lg font-semibold text-grass-900 dark:text-ivory-100">
                 {protocol.name}
               </h3>
               {protocol.cue && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">{protocol.cue}</p>
+                <p className="text-sm text-grass-700 dark:text-ivory-300">{protocol.cue}</p>
               )}
               <ExerciseGroup title="Items" items={protocol.items} />
             </div>
@@ -305,23 +309,23 @@ export default function Published({ loaderData }: Route.ComponentProps) {
 
       {doc.ramp && (
         <section className="mb-8">
-          <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-gray-100">Ramp-up</h2>
+          <h2 className="mb-3 text-xl font-semibold text-grass-900 dark:text-ivory-100">Ramp-up</h2>
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              <tr className="text-xs uppercase tracking-wide text-grass-700 dark:text-ivory-300">
                 <th className="pb-2 pr-4 font-semibold">Phase</th>
                 <th className="pb-2 pr-4 font-semibold">Weeks</th>
                 <th className="pb-2 font-semibold">Load</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            <tbody className="divide-y divide-ivory-200 dark:divide-grass-800">
               {doc.ramp.phases.map((phase, i) => (
                 <tr key={i}>
-                  <td className="py-2 pr-4 text-gray-900 dark:text-gray-100">{phase.name}</td>
-                  <td className="py-2 pr-4 text-gray-600 dark:text-gray-400">
+                  <td className="py-2 pr-4 text-grass-900 dark:text-ivory-100">{phase.name}</td>
+                  <td className="py-2 pr-4 text-grass-800/80 dark:text-ivory-200/80">
                     {phase.weeks[0]}–{phase.weeks[1]}
                   </td>
-                  <td className="py-2 text-gray-600 dark:text-gray-400">{phase.pct}%</td>
+                  <td className="py-2 text-grass-800/80 dark:text-ivory-200/80">{phase.pct}%</td>
                 </tr>
               ))}
             </tbody>

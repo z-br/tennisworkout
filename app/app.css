@@ -1,15 +1,60 @@
 @import "tailwindcss";
 
+/* ── Championship Order of Play ─────────────────────────────────────────────
+   Wimbledon elegance × US Open energy.
+   Grass carries authority, ivory carries calm, court blue carries action,
+   optic (the ball) is a highlighter — one pop per screen, never confetti. */
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+
+  /* grass — championship green */
+  --color-grass-50: #eef5f0;
+  --color-grass-100: #dcebe1;
+  --color-grass-200: #b7d6c2;
+  --color-grass-600: #2a6b4a;
+  --color-grass-700: #1d5c40;
+  --color-grass-800: #174b33;
+  --color-grass-900: #123d2a;
+  --color-grass-950: #0b2519;
+
+  /* ivory — grass-court chalk & cream */
+  --color-ivory-50: #faf8f1;
+  --color-ivory-100: #f5f1e6;
+  --color-ivory-200: #ece5d2;
+  --color-ivory-300: #ddd3b8;
+
+  /* court — US Open blue */
+  --color-court-100: #dcebfa;
+  --color-court-500: #2478cc;
+  --color-court-600: #1e64ab;
+  --color-court-700: #1b5da0;
+
+  /* optic — the ball. Sparingly. */
+  --color-optic-300: #e7fa78;
+  --color-optic-400: #d9f24f;
+  --color-optic-500: #c4e022;
 }
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-ivory-50 text-grass-950 dark:bg-grass-950 dark:text-ivory-100;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+}
+
+/* Court line — the double baseline rule used as a section divider */
+.court-rule {
+  height: 5px;
+  border-top: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  opacity: 0.25;
+}
+
+/* Display face for headings via utility */
+.font-display {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 40;
 }

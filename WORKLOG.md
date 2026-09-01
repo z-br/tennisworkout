@@ -13,3 +13,6 @@
 
 ## 2026-08-31 — remix dead-click fix verified
 - User-reported: Remix button "does nothing" on published plans. Root cause: pre-hydration click window (SSR renders the button before React attaches handlers; long on slow connections). Fix `56f8568`: remix/report buttons disabled + "Loading…" until hydrated. Verified live under throttled network: early state disabled, click after hydration navigates to editor.
+
+## 2026-08-31 — "Championship Order of Play" restyle
+- Full visual restyle per the Claude Design brief (Wimbledon elegance × US Open energy): Fraunces display serif + Archivo body, grass/ivory/court-blue/optic token system in Tailwind @theme, restyled hero, gallery, wizard, editor, companion, published pages. Print sheets untouched (heritage). Design system pushed to Claude Design project "Tennis Workout Builder".

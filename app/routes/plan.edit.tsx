@@ -280,16 +280,16 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
   return (
     <main className="mx-auto max-w-3xl px-4 pb-24 pt-8">
       <div className="mb-6 flex items-center justify-between gap-3">
-        <Link to="/" className="text-sm text-gray-500 hover:underline dark:text-gray-400">
+        <Link to="/" className="text-sm text-grass-700 hover:underline dark:text-ivory-300">
           ← Back home
         </Link>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+          <span className="text-sm text-grass-700 dark:text-ivory-300">
             {saveState === "saving" ? "Saving…" : "Saved ✓"}
           </span>
           <Link
             to={`/plan/${plan.id}/print`}
-            className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:underline dark:text-gray-400"
+            className="inline-flex items-center gap-1.5 text-sm text-grass-700 hover:underline dark:text-ivory-300"
           >
             <Icon name="print" />
             Print
@@ -297,7 +297,7 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
           <Link
             to={`/plan/${plan.id}/today`}
             data-testid="start-today-link"
-            className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
+            className="inline-flex items-center gap-2 rounded-full border border-grass-600 px-4 py-2 text-sm font-medium text-grass-800 hover:bg-grass-50 dark:border-ivory-300/50 dark:text-ivory-200 dark:hover:border-ivory-300"
           >
             <Icon name="play" size={13} />
             Start today
@@ -306,7 +306,7 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
       </div>
 
       <div className="mb-8">
-        <label htmlFor="plan-name" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label htmlFor="plan-name" className="mb-1 block text-sm font-medium text-grass-800 dark:text-ivory-200">
           Plan name
         </label>
         <input
@@ -315,12 +315,12 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
           data-testid="plan-name-input"
           value={doc.meta.name}
           onChange={(e) => updateMeta({ name: e.target.value })}
-          className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-lg font-semibold text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+          className="mb-4 w-full rounded-lg border border-ivory-300 px-3 py-2 text-lg font-semibold text-grass-950 dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
         />
 
         <label
           htmlFor="plan-description"
-          className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="mb-1 block text-sm font-medium text-grass-800 dark:text-ivory-200"
         >
           Description
         </label>
@@ -329,12 +329,12 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
           value={doc.meta.description}
           onChange={(e) => updateMeta({ description: e.target.value })}
           rows={2}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+          className="w-full rounded-lg border border-ivory-300 px-3 py-2 text-sm dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
         />
       </div>
 
       <section className="mb-10">
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">Days</h2>
+        <h2 className="mb-4 text-xl font-semibold text-grass-900 dark:text-ivory-100">Days</h2>
         <div className="space-y-6">
           {doc.days.map((day, dayIndex) => (
             <DayEditor
@@ -359,13 +359,13 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
       </section>
 
       <section className="mb-10">
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">Daily protocols</h2>
+        <h2 className="mb-4 text-xl font-semibold text-grass-900 dark:text-ivory-100">Daily protocols</h2>
         {doc.dailyProtocols.length > 0 && (
           <div className="space-y-6">
             {doc.dailyProtocols.map((protocol, pIndex) => (
-              <div key={pIndex} className="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+              <div key={pIndex} className="rounded-xl border border-ivory-300 p-4 dark:border-grass-800">
                 <div className="mb-1 flex items-center justify-between gap-2">
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100">{protocol.name}</h3>
+                  <h3 className="font-medium text-grass-900 dark:text-ivory-100">{protocol.name}</h3>
                   <button
                     type="button"
                     onClick={() => removeProtocol(pIndex)}
@@ -375,7 +375,7 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
                   </button>
                 </div>
                 {protocol.cue && (
-                  <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">{protocol.cue}</p>
+                  <p className="mb-3 text-sm text-grass-700 dark:text-ivory-300">{protocol.cue}</p>
                 )}
                 <ul className="space-y-2">
                   {protocol.items.map((item, iIndex) => (
@@ -399,7 +399,7 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
                 <button
                   type="button"
                   onClick={() => setPicker({ kind: "protocol-add", protocolIndex: pIndex })}
-                  className="mt-3 rounded-lg border border-dashed border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-500"
+                  className="mt-3 rounded-lg border border-dashed border-ivory-300 px-3 py-1.5 text-sm text-grass-800/90 hover:border-grass-600 dark:border-grass-700 dark:text-ivory-300 dark:hover:border-ivory-300"
                 >
                   + Add exercise
                 </button>
@@ -409,7 +409,7 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
         )}
 
         {addingProtocol ? (
-          <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-gray-300 p-4 dark:border-gray-700">
+          <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-ivory-300 p-4 dark:border-grass-700">
             <input
               type="text"
               value={newProtocolName}
@@ -423,20 +423,20 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
               placeholder="Protocol name"
               aria-label="New protocol name"
               autoFocus
-              className="min-w-[10rem] flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+              className="min-w-[10rem] flex-1 rounded-lg border border-ivory-300 px-3 py-2 text-sm dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
             />
             <button
               type="button"
               onClick={confirmAddProtocolName}
               disabled={!newProtocolName.trim()}
-              className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900"
+              className="rounded-lg bg-grass-900 px-3 py-1.5 text-sm font-medium text-ivory-50 disabled:opacity-50 dark:bg-ivory-200 dark:text-grass-950"
             >
               Continue
             </button>
             <button
               type="button"
               onClick={cancelAddProtocol}
-              className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+              className="text-sm text-grass-700 hover:underline dark:text-ivory-300"
             >
               Cancel
             </button>
@@ -445,7 +445,7 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
           <button
             type="button"
             onClick={startAddProtocol}
-            className="mt-4 rounded-lg border border-dashed border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-500"
+            className="mt-4 rounded-lg border border-dashed border-ivory-300 px-3 py-1.5 text-sm text-grass-800/90 hover:border-grass-600 dark:border-grass-700 dark:text-ivory-300 dark:hover:border-ivory-300"
           >
             + Add protocol
           </button>
@@ -466,18 +466,18 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
       <Form
         method="post"
         onSubmit={handlePublishSubmit}
-        className="rounded-xl border border-gray-200 p-4 dark:border-gray-800"
+        className="rounded-xl border border-ivory-300 p-4 dark:border-grass-800"
       >
         <input type="hidden" name="doc" value={JSON.stringify(publishDoc)} />
         {remixOf && <input type="hidden" name="remixOf" value={remixOf} />}
         <button
           type="submit"
           data-testid="publish-btn"
-          className="rounded-full bg-gray-900 px-6 py-3 font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+          className="rounded-full bg-grass-900 px-6 py-3 font-semibold text-ivory-50 hover:bg-grass-700 dark:bg-optic-400 dark:text-grass-950 dark:hover:bg-optic-300"
         >
           Publish & get share link
         </button>
-        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-sm text-grass-700 dark:text-ivory-300">
           Published plans are public and can't be edited — publish again for a new version.
         </p>
       </Form>
@@ -500,16 +500,16 @@ export default function PlanEdit({ loaderData }: Route.ComponentProps) {
   if (!loaderData) {
     return (
       <main className="mx-auto max-w-2xl px-4 pb-16 pt-16 text-center">
-        <h1 className="mb-3 text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="mb-3 text-2xl font-bold text-grass-900 dark:text-ivory-100">
           This plan isn't on this device
         </h1>
-        <p className="mb-6 text-gray-600 dark:text-gray-400">
+        <p className="mb-6 text-grass-800/80 dark:text-ivory-200/80">
           Plans are stored locally in your browser and don't sync between devices. If you built
           this plan elsewhere, export it there and import the backup file here to bring it back.
         </p>
         <Link
           to="/"
-          className="rounded-full bg-gray-900 px-6 py-3 font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+          className="rounded-full bg-grass-900 px-6 py-3 font-semibold text-ivory-50 hover:bg-grass-700 dark:bg-optic-400 dark:text-grass-950 dark:hover:bg-optic-300"
         >
           Back home
         </Link>

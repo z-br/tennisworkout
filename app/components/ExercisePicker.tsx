@@ -52,18 +52,18 @@ export function ExercisePicker({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-xl bg-white p-4 shadow-xl dark:bg-gray-900"
+        className="w-full max-w-lg rounded-xl bg-white p-4 shadow-xl dark:bg-grass-900"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-lg font-semibold text-grass-900 dark:text-ivory-100">
             {currentExerciseId ? "Swap exercise" : "Add exercise"}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="text-grass-700 hover:text-grass-800 dark:text-ivory-300 dark:hover:text-ivory-100"
           >
             ✕
           </button>
@@ -75,13 +75,13 @@ export function ExercisePicker({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search exercises…"
           autoFocus
-          className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
+          className="mb-4 w-full rounded-lg border border-ivory-300 px-3 py-2 text-sm dark:border-grass-700 dark:bg-grass-950 dark:text-ivory-100"
         />
 
         <div className="max-h-[60vh] overflow-y-auto">
           {currentExerciseId && suggested.length > 0 && (
             <div className="mb-4">
-              <h3 className="mb-2 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+              <h3 className="mb-2 text-xs font-semibold uppercase text-grass-700 dark:text-ivory-300">
                 Suggested swaps
               </h3>
               <ul className="space-y-1">
@@ -90,7 +90,7 @@ export function ExercisePicker({
                     <button
                       type="button"
                       onClick={() => onSelect(e.id)}
-                      className="w-full rounded-lg px-2 py-1.5 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
+                      className="w-full rounded-lg px-2 py-1.5 text-left text-sm hover:bg-ivory-200 dark:hover:bg-gray-800"
                     >
                       {e.name}
                     </button>
@@ -102,7 +102,7 @@ export function ExercisePicker({
 
           {grouped.map((group) => (
             <div key={group.pattern} className="mb-4">
-              <h3 className="mb-2 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+              <h3 className="mb-2 text-xs font-semibold uppercase text-grass-700 dark:text-ivory-300">
                 {PATTERN_LABELS[group.pattern]}
               </h3>
               <ul className="space-y-1">
@@ -111,7 +111,7 @@ export function ExercisePicker({
                     <button
                       type="button"
                       onClick={() => onSelect(e.id)}
-                      className="w-full rounded-lg px-2 py-1.5 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
+                      className="w-full rounded-lg px-2 py-1.5 text-left text-sm hover:bg-ivory-200 dark:hover:bg-gray-800"
                     >
                       {e.name}
                     </button>
@@ -122,7 +122,7 @@ export function ExercisePicker({
           ))}
 
           {grouped.length === 0 && suggested.length === 0 && (
-            <p className="text-sm text-gray-500 dark:text-gray-400">No exercises match your search.</p>
+            <p className="text-sm text-grass-700 dark:text-ivory-300">No exercises match your search.</p>
           )}
         </div>
       </div>

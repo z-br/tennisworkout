@@ -47,8 +47,8 @@ function OptionCard({
       onClick={onClick}
       className={`rounded-xl border p-4 text-left font-medium transition ${
         selected
-          ? "border-gray-900 bg-gray-900 text-white dark:border-gray-100 dark:bg-gray-100 dark:text-gray-900"
-          : "border-gray-200 text-gray-700 hover:border-gray-400 dark:border-gray-800 dark:text-gray-300 dark:hover:border-gray-600"
+          ? "border-grass-900 bg-grass-900 text-ivory-50 shadow-[inset_3px_0_0_0_var(--color-optic-400)] dark:border-ivory-100 dark:bg-ivory-100 dark:text-grass-950"
+          : "border-ivory-300 bg-white text-grass-800 hover:border-grass-600 dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-200 dark:hover:border-ivory-300"
       }`}
     >
       {label}
@@ -136,7 +136,7 @@ export function InjuriesStep({
 }) {
   return (
     <div>
-      <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+      <p className="mb-4 text-sm text-grass-700 dark:text-ivory-300">
         Flagging an injury tailors exercise selection to avoid aggravating it and adds a daily
         rehab protocol to your plan.
       </p>

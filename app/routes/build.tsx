@@ -76,10 +76,10 @@ export default function Build() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 pb-16 pt-12">
-      <p className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+      <p className="mb-2 text-[11px] font-semibold tracking-[0.3em] text-court-600 uppercase dark:text-court-100">
         Step {step + 1} of {STEP_TITLES.length}
       </p>
-      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <h1 className="font-display mb-6 text-3xl font-semibold text-grass-900 dark:text-ivory-100">
         {STEP_TITLES[step]}
       </h1>
 
@@ -106,7 +106,7 @@ export default function Build() {
           type="button"
           onClick={handleBack}
           disabled={step === 0}
-          className="rounded-full border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:border-gray-400 disabled:opacity-40 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
+          className="rounded-full border border-ivory-300 px-6 py-3 font-medium text-grass-800 hover:border-grass-600 disabled:opacity-40 dark:border-grass-700 dark:text-ivory-200 dark:hover:border-ivory-300"
         >
           Back
         </button>
@@ -114,7 +114,7 @@ export default function Build() {
           type="button"
           onClick={handleNext}
           disabled={!canAdvance || submitting}
-          className="rounded-full bg-gray-900 px-6 py-3 font-medium text-white hover:bg-gray-700 disabled:opacity-40 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+          className="rounded-full bg-grass-900 px-6 py-3 font-semibold text-ivory-50 transition hover:bg-grass-700 disabled:opacity-40 dark:bg-optic-400 dark:text-grass-950 dark:hover:bg-optic-300"
         >
           {isLastStep ? (submitting ? "Creating…" : "Create my plan") : "Next"}
         </button>

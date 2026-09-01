@@ -66,30 +66,30 @@ function ExerciseCard({
   const gateResult = pain !== undefined ? gateDecision(pain, false, gate) : "proceed";
 
   return (
-    <div className="mb-3 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+    <div className="mb-3 rounded-xl border border-ivory-300 p-4 dark:border-grass-800">
       <div className="mb-1 flex items-start justify-between gap-2">
-        <h3 className="font-medium text-gray-900 dark:text-gray-100">{name}</h3>
+        <h3 className="font-medium text-grass-900 dark:text-ivory-100">{name}</h3>
         {meta?.video && (
           <a
             href={meta.video}
             target="_blank"
             rel="noreferrer"
-            className="shrink-0 text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            className="shrink-0 text-sm text-grass-700/60 hover:text-grass-800/90 dark:hover:text-ivory-100"
           >
             ↗ video
           </a>
         )}
       </div>
-      {dose && <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">{dose}</p>}
-      {meta?.cues && <p className="mb-2 text-sm text-gray-500 dark:text-gray-500">{meta.cues}</p>}
+      {dose && <p className="mb-1 text-sm text-grass-800/80 dark:text-ivory-200/80">{dose}</p>}
+      {meta?.cues && <p className="mb-2 text-sm text-grass-700 dark:text-grass-700">{meta.cues}</p>}
       {meta?.levels && meta.levels.length > 0 && (
-        <p className="mb-2 text-xs text-gray-400 dark:text-gray-500">
+        <p className="mb-2 text-xs text-grass-700/60 dark:text-ivory-300/60">
           Levels: {meta.levels.map((level, i) => `L${i + 1} ${level}`).join(" → ")} — Move up when 3×8
           feels solid.
         </p>
       )}
       {lastActual && (
-        <p className="mb-2 text-xs text-gray-400 dark:text-gray-500">Last: {lastActual}</p>
+        <p className="mb-2 text-xs text-grass-700/60 dark:text-ivory-300/60">Last: {lastActual}</p>
       )}
       <input
         type="text"
@@ -97,11 +97,11 @@ function ExerciseCard({
         onChange={(e) => onActualChange(e.target.value)}
         placeholder="What did you do?"
         aria-label={`${name} actual`}
-        className="mb-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+        className="mb-2 w-full rounded-lg border border-ivory-300 px-3 py-2 text-sm dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
       />
       {showPainSlider && (
         <div>
-          <div className="mb-1 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+          <div className="mb-1 flex items-center justify-between text-xs text-grass-700 dark:text-ivory-300">
             <label htmlFor={`pain-${ex.exerciseId}`}>Pain during</label>
             <span>{pain ?? 0}</span>
           </div>
@@ -134,18 +134,18 @@ function SummaryView({
   gate: InjuryConfig["gate"];
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 p-6 dark:border-gray-800">
-      <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">Session logged</h2>
+    <div className="rounded-xl border border-ivory-300 p-6 dark:border-grass-800">
+      <h2 className="mb-4 text-xl font-semibold text-grass-900 dark:text-ivory-100">Session logged</h2>
       <ul className="mb-6 space-y-2">
         {log.entries.map((entry, i) => {
           const meta = getExercise(entry.exerciseId);
           const gateResult = entry.pain !== undefined ? gateDecision(entry.pain, false, gate) : "proceed";
           return (
-            <li key={i} className="rounded-lg border border-gray-200 p-3 text-sm dark:border-gray-800">
-              <p className="font-medium text-gray-900 dark:text-gray-100">
+            <li key={i} className="rounded-lg border border-ivory-300 p-3 text-sm dark:border-grass-800">
+              <p className="font-medium text-grass-900 dark:text-ivory-100">
                 {meta?.name ?? entry.exerciseId}
               </p>
-              <p className="text-gray-600 dark:text-gray-400">{entry.actual || "—"}</p>
+              <p className="text-grass-800/80 dark:text-ivory-200/80">{entry.actual || "—"}</p>
               {gateResult !== "proceed" && <GateBanner result={gateResult} />}
             </li>
           );
@@ -156,13 +156,13 @@ function SummaryView({
           to={`/plan/${planId}/today`}
           reloadDocument
           data-testid="back-to-plan-link"
-          className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
+          className="rounded-full border border-grass-600 px-4 py-2 text-sm font-medium text-grass-800 hover:bg-grass-50 dark:border-ivory-300/50 dark:text-ivory-200 dark:hover:border-ivory-300"
         >
           Back to plan
         </Link>
         <Link
           to="/"
-          className="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+          className="rounded-full bg-grass-900 px-4 py-2 text-sm font-semibold text-ivory-50 hover:bg-grass-700 dark:bg-optic-400 dark:text-grass-950 dark:hover:bg-optic-300"
         >
           Home
         </Link>
@@ -241,13 +241,13 @@ export function SessionRunner({
 
   return (
     <div>
-      <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-gray-100">
+      <h2 className="mb-3 text-lg font-semibold text-grass-900 dark:text-ivory-100">
         Day {dayIndex + 1} — {day.label}
       </h2>
 
       {day.warmup.length > 0 && (
-        <details className="mb-4 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
-          <summary className="cursor-pointer font-medium text-gray-900 dark:text-gray-100">
+        <details className="mb-4 rounded-xl border border-ivory-300 p-4 dark:border-grass-800">
+          <summary className="cursor-pointer font-medium text-grass-900 dark:text-ivory-100">
             Warm-up
           </summary>
           <ul className="mt-3 space-y-2">
@@ -255,7 +255,7 @@ export function SessionRunner({
               const meta = getExercise(ex.exerciseId);
               const name = meta?.name ?? ex.exerciseId;
               return (
-                <li key={i} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <li key={i} className="flex items-center gap-2 text-sm text-grass-800 dark:text-ivory-200">
                   <input type="checkbox" aria-label={name} className="h-4 w-4" />
                   <span>{name}</span>
                 </li>
@@ -289,7 +289,7 @@ export function SessionRunner({
 
       {day.finisher && day.finisher.length > 0 && (
         <>
-          <h2 className="mb-3 mt-6 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="mb-3 mt-6 text-lg font-semibold text-grass-900 dark:text-ivory-100">
             Finisher
           </h2>
           {day.finisher.map((ex, i) => {
@@ -314,7 +314,7 @@ export function SessionRunner({
         type="button"
         onClick={() => void handleFinish()}
         data-testid="finish-session-btn"
-        className="mt-6 w-full rounded-full bg-gray-900 px-6 py-3 font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+        className="mt-6 w-full rounded-full bg-grass-900 px-6 py-3 font-semibold text-ivory-50 hover:bg-grass-700 dark:bg-optic-400 dark:text-grass-950 dark:hover:bg-optic-300"
       >
         Finish session
       </button>

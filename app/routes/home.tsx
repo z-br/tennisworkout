@@ -118,57 +118,74 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   return (
     <main className="mx-auto max-w-5xl px-4 pb-16">
-      <section className="flex flex-col items-center gap-6 pt-16 pb-12 text-center">
-        <h1 className="max-w-2xl text-3xl font-bold text-gray-900 sm:text-4xl dark:text-gray-100">
-          Build a tennis workout that fits your body, your gear, your goals.
-        </h1>
-        <p className="max-w-xl text-gray-600 dark:text-gray-400">
-          A free plan builder tuned for tennis players: pick your goals and equipment, get a
-          weekly plan with a ramp-up schedule, and track it as you go.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <Link
-            to="/build"
-            className="rounded-full bg-gray-900 px-6 py-3 font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
-          >
-            Build my plan
-          </Link>
-          <a
-            href="#gallery"
-            className="rounded-full border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
-          >
-            Browse shared plans
-          </a>
+      <section className="relative -mx-4 mb-12 overflow-hidden bg-grass-900 px-4 text-ivory-100 sm:rounded-b-3xl">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-optic-400/60"
+        />
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 pt-16 pb-14 text-center">
+          <p className="text-[11px] font-semibold tracking-[0.35em] text-ivory-300 uppercase">
+            Order of play · your season
+          </p>
+          <h1 className="font-display max-w-2xl text-4xl font-semibold text-ivory-50 sm:text-5xl">
+            A tennis workout that fits{" "}
+            <em className="relative inline-block not-italic">
+              your
+              <span
+                aria-hidden="true"
+                className="absolute right-0 -bottom-1 left-0 h-1 rounded-full bg-optic-400"
+              />
+            </em>{" "}
+            body, gear, and goals.
+          </h1>
+          <p className="max-w-xl text-ivory-200">
+            A free plan builder tuned for tennis players: pick your goals and equipment, get a
+            weekly plan with a ramp-up schedule, and track it as you go.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to="/build"
+              className="rounded-full bg-optic-400 px-6 py-3 font-semibold text-grass-950 transition hover:bg-optic-300"
+            >
+              Build my plan
+            </Link>
+            <a
+              href="#gallery"
+              className="rounded-full border border-ivory-100/40 px-6 py-3 font-medium text-ivory-100 transition hover:border-ivory-100"
+            >
+              Browse shared plans
+            </a>
+          </div>
         </div>
       </section>
 
       <section className="pb-12">
         {yourPlans.length > 0 && (
           <>
-            <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <h2 className="font-display mb-4 text-2xl font-semibold text-grass-900 dark:text-ivory-100">
               Your plans
             </h2>
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {yourPlans.map((plan) => (
                 <li
                   key={plan.id}
-                  className="flex items-center justify-between gap-2 rounded-xl border border-gray-200 p-4 dark:border-gray-800"
+                  className="flex items-center justify-between gap-2 rounded-xl border border-ivory-300 bg-white p-4 dark:border-grass-800 dark:bg-grass-900"
                 >
                   <Link to={`/plan/${plan.id}/today`} className="min-w-0 flex-1">
-                    <span className="block truncate font-medium text-gray-900 dark:text-gray-100">
+                    <span className="font-display block truncate font-semibold text-grass-900 dark:text-ivory-100">
                       {plan.doc.meta.name}
                     </span>
                   </Link>
                   <Link
                     to={`/plan/${plan.id}/edit`}
-                    className="inline-flex shrink-0 items-center gap-1 text-sm text-gray-500 hover:underline dark:text-gray-400"
+                    className="inline-flex shrink-0 items-center gap-1 text-sm text-grass-700 hover:underline dark:text-ivory-300"
                   >
                     <Icon name="edit" size={13} />
                     edit
                   </Link>
                   <Link
                     to={`/plan/${plan.id}/print`}
-                    className="inline-flex shrink-0 items-center gap-1 text-sm text-gray-500 hover:underline dark:text-gray-400"
+                    className="inline-flex shrink-0 items-center gap-1 text-sm text-grass-700 hover:underline dark:text-ivory-300"
                   >
                     <Icon name="print" size={13} />
                     print
@@ -179,17 +196,17 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           </>
         )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
-          <span className="font-medium text-gray-700 dark:text-gray-300">Data:</span>
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-grass-700 dark:text-ivory-300">
+          <span className="font-medium">Data:</span>
           <button
             type="button"
             onClick={() => void handleExport()}
-            className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 px-3 py-1.5 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500"
+            className="inline-flex items-center gap-1.5 rounded-full border border-ivory-300 px-3 py-1.5 hover:border-grass-600 dark:border-grass-700 dark:hover:border-ivory-300"
           >
             <Icon name="download" size={13} />
             Export data
           </button>
-          <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-gray-300 px-3 py-1.5 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500">
+          <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-ivory-300 px-3 py-1.5 hover:border-grass-600 dark:border-grass-700 dark:hover:border-ivory-300">
             <Icon name="upload" size={13} />
             Import data
             <input
@@ -206,15 +223,18 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       </section>
 
       <section id="gallery" className="scroll-mt-8">
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
-          Shared plans
-        </h2>
+        <div className="mb-4 flex items-center gap-4">
+          <h2 className="font-display text-2xl font-semibold text-grass-900 dark:text-ivory-100">
+            Shared plans
+          </h2>
+          <div className="court-rule flex-1 text-grass-900 dark:text-ivory-300" aria-hidden="true" />
+        </div>
 
         <form method="get" className="mb-6 flex flex-wrap gap-3">
           <select
             name="goal"
             defaultValue={searchParams.get("goal") ?? ""}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+            className="rounded-lg border border-ivory-300 bg-white px-3 py-2 text-sm text-grass-950 dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
           >
             <option value="">Any goal</option>
             {GOALS.map((goal) => (
@@ -227,7 +247,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           <select
             name="equipment"
             defaultValue={searchParams.get("equipment") ?? ""}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+            className="rounded-lg border border-ivory-300 bg-white px-3 py-2 text-sm text-grass-950 dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
           >
             <option value="">Any equipment</option>
             {EQUIPMENT.map((item) => (
@@ -240,7 +260,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           <select
             name="days"
             defaultValue={searchParams.get("days") ?? ""}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+            className="rounded-lg border border-ivory-300 bg-white px-3 py-2 text-sm text-grass-950 dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
           >
             <option value="">Any days/week</option>
             {DAYS_PER_WEEK_OPTIONS.map((n) => (
@@ -252,7 +272,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
           <button
             type="submit"
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
+            className="rounded-lg border border-grass-600 px-4 py-2 text-sm font-medium text-grass-800 hover:bg-grass-50 dark:border-grass-600 dark:text-ivory-200 dark:hover:bg-grass-900"
           >
             Filter
           </button>
@@ -264,7 +284,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               Shared plans are temporarily unavailable.
             </p>
           ) : (
-            <p className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-500 dark:border-gray-700 dark:text-gray-400">
+            <p className="rounded-xl border border-dashed border-ivory-300 p-8 text-center text-grass-700 dark:border-grass-700 dark:text-ivory-300">
               No shared plans yet — be the first to publish one.
             </p>
           )

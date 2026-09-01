@@ -32,7 +32,7 @@ export function RestTimer() {
           type="button"
           onClick={() => start(60)}
           data-testid="rest-60-btn"
-          className="rounded-full border border-gray-300 px-4 py-1.5 text-sm font-medium text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
+          className="rounded-full border border-ivory-300 px-4 py-1.5 text-sm font-medium text-grass-800 hover:border-grass-600 dark:border-grass-700 dark:text-ivory-200 dark:hover:border-ivory-300"
         >
           Rest 60s
         </button>
@@ -40,22 +40,22 @@ export function RestTimer() {
           type="button"
           onClick={() => start(90)}
           data-testid="rest-90-btn"
-          className="rounded-full border border-gray-300 px-4 py-1.5 text-sm font-medium text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
+          className="rounded-full border border-ivory-300 px-4 py-1.5 text-sm font-medium text-grass-800 hover:border-grass-600 dark:border-grass-700 dark:text-ivory-200 dark:hover:border-ivory-300"
         >
           Rest 90s
         </button>
       </div>
 
       {running && (
-        <div className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-2px_8px_rgba(0,0,0,0.06)] dark:border-gray-800 dark:bg-gray-950">
-          <span className="text-lg font-semibold tabular-nums text-gray-900 dark:text-gray-100">
+        <div className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-between border-t border-ivory-300 bg-white px-4 py-3 shadow-[0_-2px_8px_rgba(0,0,0,0.06)] dark:border-grass-800 dark:bg-grass-950">
+          <span className="text-lg font-semibold tabular-nums text-grass-900 dark:text-ivory-100">
             Resting… {secondsLeft}s
           </span>
           <button
             type="button"
             onClick={stop}
             data-testid="rest-stop-btn"
-            className="rounded-full border border-gray-300 px-4 py-1.5 text-sm font-medium text-gray-700 dark:border-gray-700 dark:text-gray-300"
+            className="rounded-full border border-ivory-300 px-4 py-1.5 text-sm font-medium text-grass-800 dark:border-grass-700 dark:text-ivory-200"
           >
             Stop
           </button>
