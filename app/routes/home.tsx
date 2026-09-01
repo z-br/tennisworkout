@@ -5,7 +5,7 @@ import { Icon } from "~/components/Icon";
 import { PlanCard } from "~/components/PlanCard";
 import { listGallery, type PublishedRow } from "~/lib/publish.server";
 import { GOALS, EQUIPMENT, type Goal, type Equipment } from "~/lib/plan/schema";
-import { exportAll, importAll, listPlans, type StoredPlan } from "~/lib/store/local";
+import { deletePlan, exportAll, importAll, listPlans, type StoredPlan } from "~/lib/store/local";
 
 const DAYS_PER_WEEK_OPTIONS = [1, 2, 3, 4, 5, 6, 7];
 
@@ -65,6 +65,17 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
   const [yourPlans, setYourPlans] = useState<StoredPlan[]>([]);
   const [importError, setImportError] = useState<string | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
+
+  async function handleDelete(id: string) {
+    if (confirmingDelete !== id) {
+      setConfirmingDelete(id);
+      return;
+    }
+    setConfirmingDelete(null);
+    await deletePlan(id);
+    setYourPlans(await listPlans());
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -192,6 +203,19 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                     <Icon name="print" size={13} />
                     print
                   </Link>
+                  <button
+                    type="button"
+                    onClick={() => void handleDelete(plan.id)}
+                    onBlur={() => setConfirmingDelete(null)}
+                    className={
+                      confirmingDelete === plan.id
+                        ? "inline-flex shrink-0 items-center gap-1 rounded-full bg-red-600 px-2.5 py-0.5 text-sm font-medium text-white"
+                        : "inline-flex shrink-0 items-center gap-1 text-sm text-grass-700 hover:text-red-600 dark:text-ivory-300 dark:hover:text-red-400"
+                    }
+                  >
+                    <Icon name="trash" size={13} />
+                    {confirmingDelete === plan.id ? "Really delete?" : "delete"}
+                  </button>
                 </li>
               ))}
             </ul>

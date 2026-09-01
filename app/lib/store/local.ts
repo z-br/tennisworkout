@@ -178,6 +178,12 @@ export async function listPlans(): Promise<StoredPlan[]> {
 export async function deletePlan(id: string): Promise<void> {
   const b = await backend();
   await b.delete("plans", id);
+  // A deleted plan's session history is meaningless without it — remove the
+  // logs too so they don't sit orphaned in the store forever.
+  const logs = await b.getAllByIndex<SessionLog>("sessionLogs", "planId", id);
+  for (const log of logs) {
+    await b.delete("sessionLogs", log.id);
+  }
 }
 
 export async function logSession(log: SessionLog): Promise<void> {

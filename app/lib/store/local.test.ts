@@ -85,6 +85,17 @@ describe("deletePlan", () => {
     expect(await getPlan("p1")).toBeUndefined();
     expect(await listPlans()).toEqual([]);
   });
+
+  it("also removes the plan's session logs, leaving other plans' logs alone", async () => {
+    await savePlan(makePlan("p1"));
+    await savePlan(makePlan("p2"));
+    await logSession({ id: "l1", planId: "p1", dayIndex: 0, date: "2026-08-30", entries: [] });
+    await logSession({ id: "l2", planId: "p1", dayIndex: 1, date: "2026-08-31", entries: [] });
+    await logSession({ id: "l3", planId: "p2", dayIndex: 0, date: "2026-08-31", entries: [] });
+    await deletePlan("p1");
+    expect(await getLogs("p1")).toEqual([]);
+    expect((await getLogs("p2")).map((l) => l.id)).toEqual(["l3"]);
+  });
 });
 
 describe("logSession / getLogs", () => {
