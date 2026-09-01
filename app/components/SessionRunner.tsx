@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { RestTimer } from "~/components/RestTimer";
 import { getExercise } from "~/lib/exercises/library";
+import type { ResolvedExercise } from "~/lib/exercises/resolve";
 import { gateDecision, scaledDose } from "~/lib/plan/ramp";
 import type { InjuryConfig, InjuryFlag, PlanDay, PlanExercise } from "~/lib/plan/schema";
 import { logSession, type SessionLog } from "~/lib/store/local";
@@ -49,6 +50,7 @@ function ExerciseCard({
   pain,
   onActualChange,
   onPainChange,
+  resolve,
 }: {
   ex: PlanExercise;
   phasePct: number;
@@ -59,19 +61,28 @@ function ExerciseCard({
   pain?: number;
   onActualChange: (value: string) => void;
   onPainChange: (value: number) => void;
+  resolve?: (exerciseId: string) => ResolvedExercise | undefined;
 }) {
   const meta = getExercise(ex.exerciseId);
-  const name = meta?.name ?? ex.exerciseId;
+  const resolved = resolve?.(ex.exerciseId);
+  const name = resolved?.name ?? meta?.name ?? ex.exerciseId;
   const dose = doseLabel(ex, phasePct);
   const gateResult = pain !== undefined ? gateDecision(pain, false, gate) : "proceed";
 
   return (
     <div className="mb-3 rounded-xl border border-ivory-300 p-4 dark:border-grass-800">
       <div className="mb-1 flex items-start justify-between gap-2">
-        <h3 className="font-medium text-grass-900 dark:text-ivory-100">{name}</h3>
-        {meta?.video && (
+        <h3 className="font-medium text-grass-900 dark:text-ivory-100">
+          {name}
+          {resolved?.custom && (
+            <span className="ml-2 rounded-full bg-court-100 px-1.5 py-0.5 align-middle text-[10px] font-semibold tracking-wide text-court-700 uppercase dark:bg-court-700/30 dark:text-court-100">
+              custom
+            </span>
+          )}
+        </h3>
+        {(resolved?.video ?? meta?.video) && (
           <a
-            href={meta.video}
+            href={resolved?.video ?? meta!.video}
             target="_blank"
             rel="noreferrer"
             className="shrink-0 text-sm text-grass-700/60 hover:text-grass-800/90 dark:hover:text-ivory-100"
@@ -128,10 +139,12 @@ function SummaryView({
   planId,
   log,
   gate,
+  resolve,
 }: {
   planId: string;
   log: SessionLog;
   gate: InjuryConfig["gate"];
+  resolve?: (exerciseId: string) => ResolvedExercise | undefined;
 }) {
   return (
     <div className="rounded-xl border border-ivory-300 p-6 dark:border-grass-800">
@@ -139,11 +152,12 @@ function SummaryView({
       <ul className="mb-6 space-y-2">
         {log.entries.map((entry, i) => {
           const meta = getExercise(entry.exerciseId);
+          const rname = resolve?.(entry.exerciseId)?.name;
           const gateResult = entry.pain !== undefined ? gateDecision(entry.pain, false, gate) : "proceed";
           return (
             <li key={i} className="rounded-lg border border-ivory-300 p-3 text-sm dark:border-grass-800">
               <p className="font-medium text-grass-900 dark:text-ivory-100">
-                {meta?.name ?? entry.exerciseId}
+                {rname ?? meta?.name ?? entry.exerciseId}
               </p>
               <p className="text-grass-800/80 dark:text-ivory-200/80">{entry.actual || "—"}</p>
               {gateResult !== "proceed" && <GateBanner result={gateResult} />}
@@ -181,6 +195,7 @@ export function SessionRunner({
   gate,
   today,
   onSessionLogged,
+  resolve,
 }: {
   planId: string;
   dayIndex: number;
@@ -191,6 +206,7 @@ export function SessionRunner({
   gate: InjuryConfig["gate"];
   today: string;
   onSessionLogged: (log: SessionLog) => void;
+  resolve?: (exerciseId: string) => ResolvedExercise | undefined;
 }) {
   const [actuals, setActuals] = useState<Record<EntryKey, string>>({});
   const [pains, setPains] = useState<Record<EntryKey, number>>({});
@@ -236,7 +252,7 @@ export function SessionRunner({
   }
 
   if (summaryLog) {
-    return <SummaryView planId={planId} log={summaryLog} gate={gate} />;
+    return <SummaryView planId={planId} log={summaryLog} gate={gate} resolve={resolve} />;
   }
 
   return (
@@ -253,7 +269,7 @@ export function SessionRunner({
           <ul className="mt-3 space-y-2">
             {day.warmup.map((ex, i) => {
               const meta = getExercise(ex.exerciseId);
-              const name = meta?.name ?? ex.exerciseId;
+              const name = resolve?.(ex.exerciseId)?.name ?? meta?.name ?? ex.exerciseId;
               return (
                 <li key={i} className="flex items-center gap-2 text-sm text-grass-800 dark:text-ivory-200">
                   <input type="checkbox" aria-label={name} className="h-4 w-4" />
@@ -283,6 +299,7 @@ export function SessionRunner({
             pain={pains[key]}
             onActualChange={(value) => setActual(key, value)}
             onPainChange={(value) => setPain(key, value)}
+            resolve={resolve}
           />
         );
       })}
@@ -304,6 +321,7 @@ export function SessionRunner({
                 actual={actuals[key] ?? ""}
                 onActualChange={(value) => setActual(key, value)}
                 onPainChange={() => {}}
+                resolve={resolve}
               />
             );
           })}

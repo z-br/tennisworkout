@@ -1,6 +1,12 @@
 import { data, Form, isRouteErrorResponse, Link, useRouteError } from "react-router";
 import type { Route } from "./+types/admin";
-import { adminSetFlags, listAllForAdmin, type PublishedRow } from "~/lib/publish.server";
+import {
+  adminSetFlags,
+  listAllForAdmin,
+  listCustomExerciseCandidates,
+  type CustomExerciseCandidate,
+  type PublishedRow,
+} from "~/lib/publish.server";
 
 type Op = "hide" | "unhide" | "feature" | "unfeature";
 const VALID_OPS: readonly Op[] = ["hide", "unhide", "feature", "unfeature"];
@@ -26,7 +32,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   const token = new URL(request.url).searchParams.get("token") ?? "";
   const rows = await listAllForAdmin(token);
   if (rows === null) throw data("Not found", { status: 404 });
-  return { rows, token };
+  const candidates = (await listCustomExerciseCandidates(token)) ?? [];
+  return { rows, candidates, token };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -86,7 +93,7 @@ function RowActions({ row, token }: { row: PublishedRow; token: string }) {
 }
 
 export default function Admin({ loaderData }: Route.ComponentProps) {
-  const { rows, token } = loaderData;
+  const { rows, candidates, token } = loaderData;
 
   return (
     <main className="mx-auto max-w-5xl px-4 pb-16 pt-8">
@@ -132,6 +139,77 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
           <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">No published plans yet.</p>
         )}
       </div>
+
+      <section className="mt-12">
+        <h2 className="mb-2 text-xl font-bold text-gray-900 dark:text-gray-100">
+          Custom exercise candidates
+        </h2>
+        <p className="mb-4 max-w-2xl text-sm text-gray-600 dark:text-gray-400">
+          Custom exercises players invented in published plans, grouped by name. To promote one
+          into the curated library, expand it, copy the template into{" "}
+          <code>app/lib/exercises/library.ts</code>, and fill in the TODOs — pattern, equipment,
+          goals, and especially <strong>injuryLoad</strong> (the wizard's injury-safety filtering
+          depends on it, which is why promotion is a deliberate curation step, not automatic).
+        </p>
+        {candidates.length === 0 ? (
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            No custom exercises in published plans yet.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {candidates.map((c) => (
+              <CandidateRow key={c.name.toLowerCase()} candidate={c} />
+            ))}
+          </ul>
+        )}
+      </section>
     </main>
+  );
+}
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+}
+
+function libraryTemplate(c: CustomExerciseCandidate): string {
+  return `{
+  id: "${slugify(c.name)}",
+  name: ${JSON.stringify(c.name)},
+  pattern: "TODO", // hinge | squat | push | pull | rotation | carry | plyo | mobility | tendon-rehab | balance | conditioning
+  equipment: [], // TODO: required equipment, [] = bodyweight
+  goals: [], // TODO: power | footwork | injury-management | general-fitness
+  injuryLoad: {}, // TODO — solve for loading: elbow/shoulder/knee/foot -> "high" | "moderate" | "safe" | "rehab"
+  cues: ${JSON.stringify(c.sampleCues ?? "TODO: coaching cues")},
+  video: yt(${JSON.stringify(c.name.toLowerCase())}),
+},`;
+}
+
+function CandidateRow({ candidate }: { candidate: CustomExerciseCandidate }) {
+  return (
+    <li className="rounded-lg border border-gray-200 p-3 dark:border-gray-800">
+      <details>
+        <summary className="cursor-pointer text-sm">
+          <span className="font-medium text-gray-900 dark:text-gray-100">{candidate.name}</span>{" "}
+          <span className="text-gray-500 dark:text-gray-400">
+            · used in {candidate.uses} plan{candidate.uses === 1 ? "" : "s"} · e.g.{" "}
+            <Link to={`/p/${candidate.examplePlanSlug}`} className="underline">
+              {candidate.examplePlanSlug}
+            </Link>
+          </span>
+        </summary>
+        {candidate.sampleCues && (
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Cues: {candidate.sampleCues}
+          </p>
+        )}
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-gray-100 p-3 text-xs dark:bg-gray-800 dark:text-gray-200">
+          {libraryTemplate(candidate)}
+        </pre>
+      </details>
+    </li>
   );
 }

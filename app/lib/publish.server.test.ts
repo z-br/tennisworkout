@@ -13,6 +13,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("publish.server", () => {
   let reportPlan: typeof import("./publish.server").reportPlan;
   let adminSetFlags: typeof import("./publish.server").adminSetFlags;
   let listAllForAdmin: typeof import("./publish.server").listAllForAdmin;
+  let listCustomExerciseCandidates: typeof import("./publish.server").listCustomExerciseCandidates;
 
   const testDatabaseUrl = process.env.TEST_DATABASE_URL!;
 
@@ -61,7 +62,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("publish.server", () => {
     process.env.ADMIN_TOKEN = "test-admin-token";
 
     ({ getSql } = await import("./db.server"));
-    ({ publishPlan, getPublished, listGallery, reportPlan, adminSetFlags, listAllForAdmin } =
+    ({ publishPlan, getPublished, listGallery, reportPlan, adminSetFlags, listAllForAdmin, listCustomExerciseCandidates } =
       await import("./publish.server"));
   });
 
@@ -227,4 +228,36 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("publish.server", () => {
 
     expect(await listAllForAdmin("wrong-token")).toBeNull();
   });
+
+  describe("listCustomExerciseCandidates", () => {
+    it("groups custom exercises across published plans, case-insensitively", async () => {
+      const withCustom = (name: string) => ({
+        ...basePlan(),
+        days: [
+          {
+            label: "Day 1",
+            focus: "Power",
+            warmup: [],
+            main: [{ exerciseId: "custom-aaa1", sets: 2, reps: "10" }],
+          },
+        ],
+        customExercises: [{ id: "custom-aaa1", name, cues: "Land soft." }],
+      });
+      const r1 = await publishPlan(withCustom("Bosu 360 Smash"));
+      const r2 = await publishPlan(withCustom("bosu 360 smash"));
+      expect(r1.ok && r2.ok).toBe(true);
+
+      const candidates = await listCustomExerciseCandidates(process.env.ADMIN_TOKEN!);
+      expect(candidates).not.toBeNull();
+      const smash = candidates!.find((c) => c.name.toLowerCase() === "bosu 360 smash");
+      expect(smash?.uses).toBe(2);
+      expect(smash?.sampleCues).toBe("Land soft.");
+      expect(smash?.examplePlanSlug).toBeTruthy();
+    });
+
+    it("returns null with a wrong token", async () => {
+      expect(await listCustomExerciseCandidates("nope")).toBeNull();
+    });
+  });
+
 });

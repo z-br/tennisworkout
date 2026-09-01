@@ -5,6 +5,7 @@ import { DayEditor, ExerciseRow, type Section } from "~/components/DayEditor";
 import { Icon } from "~/components/Icon";
 import { ExercisePicker } from "~/components/ExercisePicker";
 import { getPlan, savePlan, type StoredPlan } from "~/lib/store/local";
+import { newCustomExerciseId, resolveExercise } from "~/lib/exercises/resolve";
 import type { PlanDay, PlanDoc, PlanExercise } from "~/lib/plan/schema";
 import { publishPlan } from "~/lib/publish.server";
 
@@ -216,6 +217,17 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
     }));
   }
 
+  // Create the plan-local definition, then insert a reference to it through
+  // the exact same path a library pick takes.
+  function handleCreateCustom(name: string, cues?: string) {
+    const id = newCustomExerciseId();
+    setDoc((d) => ({
+      ...d,
+      customExercises: [...(d.customExercises ?? []), { id, name, ...(cues ? { cues } : {}) }],
+    }));
+    handlePick(id);
+  }
+
   function handlePick(exerciseId: string) {
     if (!picker) return;
     switch (picker.kind) {
@@ -353,6 +365,7 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
                 setPicker({ kind: "day-swap", dayIndex, section, exIndex, exerciseId })
               }
               onAddExercise={(section) => setPicker({ kind: "day-add", dayIndex, section })}
+              resolve={(id) => resolveExercise(doc, id)}
             />
           ))}
         </div>
@@ -393,6 +406,7 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
                         })
                       }
                       removeDisabled={protocol.items.length <= 1}
+                      resolve={(id) => resolveExercise(doc, id)}
                     />
                   ))}
                 </ul>
@@ -503,6 +517,7 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
             picker.kind === "day-swap" || picker.kind === "protocol-swap" ? picker.exerciseId : undefined
           }
           onSelect={handlePick}
+          onCreateCustom={handleCreateCustom}
           onClose={() => setPicker(null)}
         />
       )}

@@ -3,6 +3,8 @@ import { data, isRouteErrorResponse, Link, useFetcher, useNavigate, useRouteErro
 import { Icon } from "~/components/Icon";
 import type { Route } from "./+types/published";
 import { getExercise } from "~/lib/exercises/library";
+import { resolveExercise } from "~/lib/exercises/resolve";
+import type { PlanDoc } from "~/lib/plan/schema";
 import { getPublished, type PublishedRow } from "~/lib/publish.server";
 import type { PlanDay, PlanExercise } from "~/lib/plan/schema";
 import { savePlan } from "~/lib/store/local";
@@ -81,9 +83,11 @@ function doseText(ex: PlanExercise): string | undefined {
   return reps;
 }
 
-function PlanExerciseItem({ ex }: { ex: PlanExercise }) {
+function PlanExerciseItem({ ex, doc }: { ex: PlanExercise; doc: PlanDoc }) {
   const exercise = getExercise(ex.exerciseId);
-  const name = exercise?.name ?? ex.exerciseId;
+  const resolved = resolveExercise(doc, ex.exerciseId);
+  const name = resolved?.name ?? ex.exerciseId;
+  const video = resolved?.video ?? exercise?.video;
   const dose = doseText(ex);
 
   return (
@@ -91,9 +95,9 @@ function PlanExerciseItem({ ex }: { ex: PlanExercise }) {
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
         <span className="font-medium text-grass-900 dark:text-ivory-100">{name}</span>
         {dose && <span className="text-sm text-grass-700 dark:text-ivory-300">{dose}</span>}
-        {exercise?.video && (
+        {video && (
           <a
-            href={exercise.video}
+            href={video}
             target="_blank"
             rel="noreferrer"
             className="text-sm text-court-600 hover:underline dark:text-court-100"
@@ -107,7 +111,7 @@ function PlanExerciseItem({ ex }: { ex: PlanExercise }) {
   );
 }
 
-function ExerciseGroup({ title, items }: { title: string; items: PlanExercise[] }) {
+function ExerciseGroup({ title, items, doc }: { title: string; items: PlanExercise[]; doc: PlanDoc }) {
   if (items.length === 0) return null;
   return (
     <div className="mt-3">
@@ -116,21 +120,21 @@ function ExerciseGroup({ title, items }: { title: string; items: PlanExercise[] 
       </h4>
       <ul className="mt-1 divide-y divide-ivory-200 dark:divide-grass-800">
         {items.map((ex, i) => (
-          <PlanExerciseItem key={i} ex={ex} />
+          <PlanExerciseItem key={i} ex={ex} doc={doc} />
         ))}
       </ul>
     </div>
   );
 }
 
-function DaySection({ day }: { day: PlanDay }) {
+function DaySection({ day, doc }: { day: PlanDay; doc: PlanDoc }) {
   return (
     <section className="mb-6 rounded-2xl border border-ivory-300 p-5 dark:border-grass-800">
       <h3 className="text-lg font-semibold text-grass-900 dark:text-ivory-100">{day.label}</h3>
       {day.focus && <p className="text-sm text-grass-700 dark:text-ivory-300">{day.focus}</p>}
-      <ExerciseGroup title="Warm-up" items={day.warmup} />
-      <ExerciseGroup title="Main" items={day.main} />
-      <ExerciseGroup title="Finisher" items={day.finisher ?? []} />
+      <ExerciseGroup title="Warm-up" items={day.warmup} doc={doc} />
+      <ExerciseGroup title="Main" items={day.main} doc={doc} />
+      <ExerciseGroup title="Finisher" items={day.finisher ?? []} doc={doc} />
     </section>
   );
 }
@@ -284,7 +288,7 @@ export default function Published({ loaderData }: Route.ComponentProps) {
       <section>
         <h2 className="mb-3 text-xl font-semibold text-grass-900 dark:text-ivory-100">Days</h2>
         {doc.days.map((day, i) => (
-          <DaySection key={i} day={day} />
+          <DaySection key={i} day={day} doc={doc} />
         ))}
       </section>
 
@@ -301,7 +305,7 @@ export default function Published({ loaderData }: Route.ComponentProps) {
               {protocol.cue && (
                 <p className="text-sm text-grass-700 dark:text-ivory-300">{protocol.cue}</p>
               )}
-              <ExerciseGroup title="Items" items={protocol.items} />
+              <ExerciseGroup title="Items" items={protocol.items} doc={doc} />
             </div>
           ))}
         </section>

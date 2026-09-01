@@ -17,6 +17,16 @@ test("wizard -> edit -> log -> publish -> public page -> remix", async ({ page }
   await page.getByRole("button", { name: /create my plan/i }).click();
   await expect(page).toHaveURL(/\/plan\/.+\/edit/);
   await page.getByLabel(/plan name/i).fill("Smoke Test Plan");
+
+  // Create a custom exercise through the picker and confirm it lands in the
+  // day with its "custom" tag.
+  await page.getByRole("button", { name: /add exercise/i }).first().click();
+  await page.getByTestId("create-custom-exercise").click();
+  await page.getByTestId("custom-exercise-name").fill("Bosu 360 Smash");
+  await page.getByTestId("custom-exercise-save").click();
+  await expect(page.getByText("Bosu 360 Smash")).toBeVisible();
+  await expect(page.getByText("custom", { exact: true }).first()).toBeVisible();
+
   await page.getByRole("link", { name: /start today/i }).click(); // -> /today
   await expect(page.getByText(/week 1/i)).toBeVisible();
   await page.getByRole("button", { name: /finish session/i }).click();

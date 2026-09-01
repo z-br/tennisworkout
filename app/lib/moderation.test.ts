@@ -277,3 +277,20 @@ describe("moderationIssues", () => {
     expect(issues.length).toBeGreaterThanOrEqual(2);
   });
 });
+
+describe("custom exercises moderation", () => {
+  it("flags a URL in a custom exercise name", () => {
+    const doc = {
+      ...cleanPlan,
+      customExercises: [{ id: "custom-abc1", name: "Visit www.spam.example now" }],
+    } as PlanDoc;
+    expect(moderationIssues(doc).some((i) => i.includes("custom exercise 1 name"))).toBe(true);
+  });
+  it("clean custom exercises pass", () => {
+    const doc = {
+      ...cleanPlan,
+      customExercises: [{ id: "custom-abc1", name: "Bosu 360 Smash", cues: "Land soft." }],
+    } as PlanDoc;
+    expect(moderationIssues(doc)).toEqual([]);
+  });
+});

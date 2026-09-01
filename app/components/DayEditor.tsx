@@ -1,4 +1,5 @@
 import { getExercise } from "~/lib/exercises/library";
+import type { ResolvedExercise } from "~/lib/exercises/resolve";
 import type { PlanDay, PlanExercise } from "~/lib/plan/schema";
 
 export type Section = "warmup" | "main" | "finisher";
@@ -16,6 +17,7 @@ export function ExerciseRow({
   onSwap,
   removeDisabled,
   swapTestId,
+  resolve,
 }: {
   exercise: PlanExercise;
   onChange: (patch: Partial<PlanExercise>) => void;
@@ -23,14 +25,23 @@ export function ExerciseRow({
   onSwap: () => void;
   removeDisabled: boolean;
   swapTestId?: string;
+  resolve?: (exerciseId: string) => ResolvedExercise | undefined;
 }) {
-  const meta = getExercise(exercise.exerciseId);
-  const name = meta?.name ?? exercise.exerciseId;
+  const lib = getExercise(exercise.exerciseId);
+  const resolved = resolve?.(exercise.exerciseId);
+  const name = resolved?.name ?? lib?.name ?? exercise.exerciseId;
+  const video = resolved?.video ?? lib?.video;
+  const isCustom = resolved?.custom ?? false;
 
   return (
     <li className="flex flex-wrap items-center gap-2 rounded-lg border border-ivory-300 p-3 dark:border-grass-800">
       <span className="min-w-[10rem] flex-1 font-medium text-grass-900 dark:text-ivory-100">
         {name}
+        {isCustom && (
+          <span className="ml-2 rounded-full bg-court-100 px-1.5 py-0.5 align-middle text-[10px] font-semibold tracking-wide text-court-700 uppercase dark:bg-court-700/30 dark:text-court-100">
+            custom
+          </span>
+        )}
       </span>
       <input
         type="number"
@@ -59,9 +70,9 @@ export function ExerciseRow({
         aria-label={`${name} note`}
         className="min-w-[8rem] flex-1 rounded-lg border border-ivory-300 px-2 py-1 text-sm dark:border-grass-700 dark:bg-grass-900 dark:text-ivory-100"
       />
-      {meta?.video && (
+      {video && (
         <a
-          href={meta.video}
+          href={video}
           target="_blank"
           rel="noreferrer"
           aria-label={`${name} video`}
@@ -103,6 +114,7 @@ export function DayEditor({
   onRemoveExercise,
   onSwapExercise,
   onAddExercise,
+  resolve,
 }: {
   day: PlanDay;
   dayIndex: number;
@@ -116,6 +128,7 @@ export function DayEditor({
   onRemoveExercise: (section: Section, exIndex: number) => void;
   onSwapExercise: (section: Section, exIndex: number, exerciseId: string) => void;
   onAddExercise: (section: Section) => void;
+  resolve?: (exerciseId: string) => ResolvedExercise | undefined;
 }) {
   let rowCounter = 0;
 
@@ -180,6 +193,7 @@ export function DayEditor({
                     onRemove={() => onRemoveExercise(key, exIndex)}
                     onSwap={() => onSwapExercise(key, exIndex, exercise.exerciseId)}
                     removeDisabled={key === "main" && list.length <= 1}
+                    resolve={resolve}
                   />
                 );
               })}

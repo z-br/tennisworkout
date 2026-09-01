@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { getExercise } from "~/lib/exercises/library";
+import { resolveExercise } from "~/lib/exercises/resolve";
 import type { Equipment, PlanDoc, PlanExercise, Protocol, RampPhase } from "~/lib/plan/schema";
 
 // Shared printable rendering for a plan document. Used by both the local
@@ -68,11 +69,11 @@ export function rampSummary(phases: readonly RampPhase[]): string {
   return phases.map((p) => `${p.name} ${p.pct}% (wk ${p.weeks[0]}–${p.weeks[1]})`).join(" · ");
 }
 
-function finisherLine(items: PlanExercise[]): string {
+function finisherLine(items: PlanExercise[], nameOf: (id: string) => string): string {
   return items
     .map((ex) => {
       const dose = doseLabel(ex);
-      return dose ? `${exerciseName(ex.exerciseId)} ${dose}` : exerciseName(ex.exerciseId);
+      return dose ? `${nameOf(ex.exerciseId)} ${dose}` : nameOf(ex.exerciseId);
     })
     .join(", ");
 }
@@ -159,6 +160,7 @@ export function PrintSheets({
   backTo: string;
   backLabel: string;
 }) {
+  const nameOf = (id: string) => resolveExercise(doc, id)?.name ?? id;
   const dailyProtocol = dailyStripProtocol(doc.dailyProtocols);
   const warmupProtocol = warmupCardProtocol(doc.dailyProtocols);
   const gridColumns = Math.min(doc.meta.daysPerWeek, 4);
@@ -209,7 +211,7 @@ export function PrintSheets({
                   const dose = doseLabel(item);
                   return (
                     <li key={i}>
-                      <b>{i + 1}.</b> {exerciseName(item.exerciseId)}
+                      <b>{i + 1}.</b> {nameOf(item.exerciseId)}
                       {dose ? ` — ${dose}` : ""}
                     </li>
                   );
@@ -225,7 +227,7 @@ export function PrintSheets({
           <div className="grid" style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
             {doc.days.map((day, dayIndex) => {
               const accent = accentClass(dayIndex);
-              const warmupNames = day.warmup.map((ex) => exerciseName(ex.exerciseId)).join(", ");
+              const warmupNames = day.warmup.map((ex) => nameOf(ex.exerciseId)).join(", ");
               return (
                 <div className={`day ${accent}`} key={dayIndex}>
                   <h2>
@@ -238,7 +240,7 @@ export function PrintSheets({
                       const dose = doseLabel(ex);
                       return (
                         <li key={exIndex}>
-                          {exerciseName(ex.exerciseId)}
+                          {nameOf(ex.exerciseId)}
                           {dose && <span className="dose">{dose}</span>}
                         </li>
                       );
@@ -246,7 +248,7 @@ export function PrintSheets({
                   </ol>
                   {day.finisher && day.finisher.length > 0 && (
                     <div className="fin">
-                      <b>Finisher</b> · {finisherLine(day.finisher)}
+                      <b>Finisher</b> · {finisherLine(day.finisher, nameOf)}
                     </div>
                   )}
                 </div>
@@ -280,7 +282,7 @@ export function PrintSheets({
                 return (
                   <li key={i}>
                     <span className="txt">
-                      <b>{exerciseName(item.exerciseId)}</b>
+                      <b>{nameOf(item.exerciseId)}</b>
                       {item.note && <span className="d">{item.note}</span>}
                     </span>
                     {dose && <span className="time">{dose}</span>}

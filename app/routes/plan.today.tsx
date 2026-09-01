@@ -1,3 +1,4 @@
+import { resolveExercise } from "~/lib/exercises/resolve";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/plan.today";
@@ -131,6 +132,7 @@ function PlanTodayScreen({
         })}
 
         <SessionRunner
+          resolve={(id) => resolveExercise(plan.doc, id)}
           planId={plan.id}
           dayIndex={dayIndex}
           day={day}

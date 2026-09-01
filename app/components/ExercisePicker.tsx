@@ -26,15 +26,27 @@ export function ExercisePicker({
   equipment,
   currentExerciseId,
   onSelect,
+  onCreateCustom,
   onClose,
 }: {
   equipment: Equipment[];
   currentExerciseId?: string;
   onSelect: (exerciseId: string) => void;
+  /** Called with a name + optional cue when the user creates their own exercise. */
+  onCreateCustom: (name: string, cues?: string) => void;
   onClose: () => void;
 }) {
   const [query, setQuery] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [customName, setCustomName] = useState("");
+  const [customCues, setCustomCues] = useState("");
   const q = query.trim().toLowerCase();
+
+  function submitCustom() {
+    const name = customName.trim();
+    if (!name) return;
+    onCreateCustom(name.slice(0, 80), customCues.trim().slice(0, 200) || undefined);
+  }
 
   const suggested = currentExerciseId
     ? substitutions(currentExerciseId, equipment).filter((e) => e.name.toLowerCase().includes(q))
@@ -77,6 +89,63 @@ export function ExercisePicker({
           autoFocus
           className="mb-4 w-full rounded-lg border border-ivory-300 px-3 py-2 text-sm dark:border-grass-700 dark:bg-grass-950 dark:text-ivory-100"
         />
+
+        <div className="mb-4 rounded-lg border border-dashed border-grass-600/50 p-3 dark:border-ivory-300/30">
+          {creating ? (
+            <div className="space-y-2">
+              <input
+                type="text"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && submitCustom()}
+                placeholder="Exercise name (e.g. Bosu 360 Smash)"
+                maxLength={80}
+                autoFocus
+                data-testid="custom-exercise-name"
+                className="w-full rounded-lg border border-ivory-300 px-3 py-2 text-sm dark:border-grass-700 dark:bg-grass-950 dark:text-ivory-100"
+              />
+              <input
+                type="text"
+                value={customCues}
+                onChange={(e) => setCustomCues(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && submitCustom()}
+                placeholder="Coaching cue (optional)"
+                maxLength={200}
+                className="w-full rounded-lg border border-ivory-300 px-3 py-2 text-sm dark:border-grass-700 dark:bg-grass-950 dark:text-ivory-100"
+              />
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={submitCustom}
+                  disabled={!customName.trim()}
+                  data-testid="custom-exercise-save"
+                  className="rounded-full bg-grass-900 px-4 py-1.5 text-sm font-semibold text-ivory-50 hover:bg-grass-700 disabled:opacity-40 dark:bg-optic-400 dark:text-grass-950"
+                >
+                  Add it
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCreating(false)}
+                  className="text-sm text-grass-700 hover:underline dark:text-ivory-300"
+                >
+                  Cancel
+                </button>
+                <span className="text-xs text-grass-700/70 dark:text-ivory-300/60">
+                  Saved into this plan; gets a video search link automatically.
+                </span>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setCreating(true)}
+              data-testid="create-custom-exercise"
+              className="text-sm font-medium text-grass-800 hover:underline dark:text-ivory-200"
+            >
+              ＋ Create your own exercise
+            </button>
+          )}
+        </div>
 
         <div className="max-h-[60vh] overflow-y-auto">
           {currentExerciseId && suggested.length > 0 && (

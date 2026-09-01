@@ -164,3 +164,41 @@ export async function listAllForAdmin(token: string): Promise<PublishedRow[] | n
   `;
   return rows.map(toPublishedRow);
 }
+
+export type CustomExerciseCandidate = {
+  name: string;
+  uses: number;
+  sampleCues: string | null;
+  examplePlanSlug: string;
+};
+
+/** Custom exercises found across visible published plans, grouped
+ *  case-insensitively by name — the admin's promotion pipeline into the
+ *  curated library. Null on a bad token, like the other admin reads. */
+export async function listCustomExerciseCandidates(
+  token: string,
+): Promise<CustomExerciseCandidate[] | null> {
+  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) return null;
+
+  const sql = getSql();
+  const rows = await sql<
+    { name: string; uses: string; sample_cues: string | null; example_plan_slug: string }[]
+  >`
+    SELECT
+      min(ce->>'name') AS name,
+      count(*) AS uses,
+      min(ce->>'cues') AS sample_cues,
+      min(slug) AS example_plan_slug
+    FROM published_plans, jsonb_array_elements(doc->'customExercises') AS ce
+    WHERE NOT hidden
+    GROUP BY lower(ce->>'name')
+    ORDER BY count(*) DESC, min(ce->>'name')
+    LIMIT 100
+  `;
+  return rows.map((r) => ({
+    name: r.name,
+    uses: Number(r.uses),
+    sampleCues: r.sample_cues,
+    examplePlanSlug: r.example_plan_slug,
+  }));
+}

@@ -180,5 +180,24 @@ export function moderationIssues(doc: PlanDoc): string[] {
     });
   });
 
+  // Check custom exercise definitions (free text that travels with the plan)
+  (doc.customExercises ?? []).forEach((custom, i) => {
+    const n = i + 1;
+    if (hasUrl(custom.name)) {
+      issues.push(`custom exercise ${n} name contains a link`);
+    }
+    if (hasProfanity(custom.name)) {
+      issues.push(`custom exercise ${n} name contains inappropriate language`);
+    }
+    if (custom.cues) {
+      if (hasUrl(custom.cues)) {
+        issues.push(`custom exercise ${n} cues contain a link`);
+      }
+      if (hasProfanity(custom.cues)) {
+        issues.push(`custom exercise ${n} cues contain inappropriate language`);
+      }
+    }
+  });
+
   return issues;
 }

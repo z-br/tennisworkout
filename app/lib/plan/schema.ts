@@ -54,6 +54,18 @@ const planSchema = z.object({
     flags: z.array(z.enum(INJURY_FLAGS)),
     gate: z.object({ proceedMax: z.number().min(0).max(10), dropPct: z.number().min(0).max(100) }),
   }),
+  // User-defined exercises referenced by days/protocols via their `custom-…`
+  // id. Optional + additive: plans without it stay schemaVersion 1 valid.
+  customExercises: z
+    .array(
+      z.object({
+        id: z.string().regex(/^custom-[a-z0-9-]+$/),
+        name: z.string().min(1).max(80),
+        cues: z.string().max(200).optional(),
+      }),
+    )
+    .max(50)
+    .optional(),
 });
 
 export type PlanDoc = z.infer<typeof planSchema>;
@@ -63,6 +75,7 @@ export type PlanExercise = z.infer<typeof planExercise>;
 export type Protocol = PlanDoc["dailyProtocols"][number];
 export type RampPhase = NonNullable<PlanDoc["ramp"]>["phases"][number];
 export type InjuryConfig = PlanDoc["injuryConfig"];
+export type CustomExercise = NonNullable<PlanDoc["customExercises"]>[number];
 export type Goal = (typeof GOALS)[number];
 export type Equipment = (typeof EQUIPMENT)[number];
 export type InjuryFlag = (typeof INJURY_FLAGS)[number];

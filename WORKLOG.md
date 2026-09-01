@@ -19,3 +19,6 @@
 
 ## 2026-08-31 — UX polish batch (user feedback session)
 - Print reachable from editor + Your Plans; public plans get direct /p/:slug/print (retired "Remix to print"). Icons on action buttons. Hydration dead-click fix on published pages. Delete plans (two-tap confirm, cleans session logs). Local-vs-published clarity: dashed device panel, per-plan "This device only"/"Published" chips, editor publish-status line. Export/import moved into Advanced disclosure. "Championship Order of Play" restyle + amped hero shipped; design system pushed to Claude Design.
+
+## 2026-08-31 — custom exercises + admin promotion pipeline
+- Players can create custom exercises in the editor picker (stored in the plan doc, schema-additive customExercises field, moderated free text, derived video search links, "custom" tags everywhere, no injury logic). Admin gained a "Custom exercise candidates" section: custom exercises across published plans grouped by name with usage counts + copyable library-entry templates whose TODOs (pattern/equipment/goals/injuryLoad) make promotion a deliberate curation step.
