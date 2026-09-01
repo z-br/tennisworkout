@@ -10,3 +10,6 @@
 
 ## 2026-08-01 — deployed
 - Merged to main (fast-forward, 28 commits) and pushed. Deployed via ship-webapp: Coolify app `nsxys5fchjnqxcgnhippepaj`, Nixpacks, node 24 (`.nvmrc`), tunnel route + DNS. Fixed deploy blocker (lockfile missing linux-side `@emnapi/runtime`; regenerated). Seeded + featured founding plan `/p/dJl8iS9qtp` via the live publish/admin actions. Live: https://tennis.zebraproject.org
+
+## 2026-08-31 — remix dead-click fix verified
+- User-reported: Remix button "does nothing" on published plans. Root cause: pre-hydration click window (SSR renders the button before React attaches handlers; long on slow connections). Fix `56f8568`: remix/report buttons disabled + "Loading…" until hydrated. Verified live under throttled network: early state disabled, click after hydration navigates to editor.
