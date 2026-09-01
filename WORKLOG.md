@@ -16,3 +16,6 @@
 
 ## 2026-08-31 — "Championship Order of Play" restyle
 - Full visual restyle per the Claude Design brief (Wimbledon elegance × US Open energy): Fraunces display serif + Archivo body, grass/ivory/court-blue/optic token system in Tailwind @theme, restyled hero, gallery, wizard, editor, companion, published pages. Print sheets untouched (heritage). Design system pushed to Claude Design project "Tennis Workout Builder".
+
+## 2026-08-31 — UX polish batch (user feedback session)
+- Print reachable from editor + Your Plans; public plans get direct /p/:slug/print (retired "Remix to print"). Icons on action buttons. Hydration dead-click fix on published pages. Delete plans (two-tap confirm, cleans session logs). Local-vs-published clarity: dashed device panel, per-plan "This device only"/"Published" chips, editor publish-status line. Export/import moved into Advanced disclosure. "Championship Order of Play" restyle + amped hero shipped; design system pushed to Claude Design.
