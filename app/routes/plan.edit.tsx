@@ -470,6 +470,20 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
       >
         <input type="hidden" name="doc" value={JSON.stringify(publishDoc)} />
         {remixOf && <input type="hidden" name="remixOf" value={remixOf} />}
+        <p className="mb-3 flex items-center gap-1.5 text-sm font-medium text-grass-800 dark:text-ivory-200">
+          <Icon name={plan.sourceSlug ? "globe" : "device"} size={14} />
+          {plan.sourceSlug ? (
+            <>
+              Published at{" "}
+              <Link to={`/p/${plan.sourceSlug}`} className="underline">
+                /p/{plan.sourceSlug}
+              </Link>{" "}
+              — local edits stay private until you publish again.
+            </>
+          ) : (
+            "Not published — this plan is private to this device."
+          )}
+        </p>
         <button
           type="submit"
           data-testid="publish-btn"

@@ -174,25 +174,47 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
       <section className="pb-12">
         {yourPlans.length > 0 && (
-          <>
-            <h2 className="font-display mb-1 text-2xl font-semibold text-grass-900 dark:text-ivory-100">
-              Your plans
-            </h2>
+          <div className="rounded-2xl border-2 border-dashed border-grass-600/40 bg-ivory-100/60 p-5 dark:border-ivory-300/30 dark:bg-grass-900/40">
+            <div className="mb-1 flex items-center gap-2">
+              <Icon name="device" size={18} />
+              <h2 className="font-display text-2xl font-semibold text-grass-900 dark:text-ivory-100">
+                Your plans — on this device
+              </h2>
+            </div>
             <p className="mb-4 text-sm text-grass-700 dark:text-ivory-300">
-              Private to this device — nothing here is shared until you publish it from the
-              editor.
+              These live only in this browser. They have no public link and don't appear in the
+              gallery or admin until you open one and hit{" "}
+              <strong>Publish &amp; get share link</strong>.
             </p>
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {yourPlans.map((plan) => (
                 <li
                   key={plan.id}
-                  className="flex items-center justify-between gap-2 rounded-xl border border-ivory-300 bg-white p-4 dark:border-grass-800 dark:bg-grass-900"
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-ivory-300 bg-white p-4 dark:border-grass-800 dark:bg-grass-900"
                 >
                   <Link to={`/plan/${plan.id}/today`} className="min-w-0 flex-1">
                     <span className="font-display block truncate font-semibold text-grass-900 dark:text-ivory-100">
                       {plan.doc.meta.name}
                     </span>
                   </Link>
+                  {plan.sourceSlug ? (
+                    <Link
+                      to={`/p/${plan.sourceSlug}`}
+                      className="inline-flex shrink-0 items-center gap-1 rounded-full bg-grass-100 px-2 py-0.5 text-xs font-medium text-grass-800 hover:bg-grass-200 dark:bg-grass-800 dark:text-ivory-200"
+                      title="This plan has a published version — tap to view it"
+                    >
+                      <Icon name="globe" size={11} />
+                      Published
+                    </Link>
+                  ) : (
+                    <span
+                      className="inline-flex shrink-0 items-center gap-1 rounded-full bg-ivory-200 px-2 py-0.5 text-xs font-medium text-grass-700 dark:bg-grass-800 dark:text-ivory-300"
+                      title="Only on this device — publish from the editor to share it"
+                    >
+                      <Icon name="device" size={11} />
+                      This device only
+                    </span>
+                  )}
                   <Link
                     to={`/plan/${plan.id}/edit`}
                     className="inline-flex shrink-0 items-center gap-1 text-sm text-grass-700 hover:underline dark:text-ivory-300"
@@ -223,7 +245,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                 </li>
               ))}
             </ul>
-          </>
+          </div>
         )}
 
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-grass-700 dark:text-ivory-300">
