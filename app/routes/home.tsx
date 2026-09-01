@@ -164,6 +164,12 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   >
                     edit
                   </Link>
+                  <Link
+                    to={`/plan/${plan.id}/print`}
+                    className="shrink-0 text-sm text-gray-500 hover:underline dark:text-gray-400"
+                  >
+                    print
+                  </Link>
                 </li>
               ))}
             </ul>

@@ -287,6 +287,12 @@ function PlanEditor({ plan }: { plan: StoredPlan }) {
             {saveState === "saving" ? "Saving…" : "Saved ✓"}
           </span>
           <Link
+            to={`/plan/${plan.id}/print`}
+            className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+          >
+            Print
+          </Link>
+          <Link
             to={`/plan/${plan.id}/today`}
             data-testid="start-today-link"
             className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
