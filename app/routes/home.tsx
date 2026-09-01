@@ -118,40 +118,42 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   return (
     <main className="mx-auto max-w-5xl px-4 pb-16">
-      <section className="relative -mx-4 mb-12 overflow-hidden bg-grass-900 px-4 text-ivory-100 sm:rounded-b-3xl">
+      <section className="hero-court relative -mx-4 mb-12 overflow-hidden px-4 text-ivory-100 sm:rounded-b-3xl">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-0 h-px bg-optic-400/60"
         />
-        <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 pt-16 pb-14 text-center">
-          <p className="text-[11px] font-semibold tracking-[0.35em] text-ivory-300 uppercase">
+        {/* court-line motif: sideline + service line, barely-there */}
+        <div aria-hidden="true" className="court-lines pointer-events-none absolute inset-0" />
+        <div className="relative mx-auto flex max-w-5xl flex-col items-center gap-6 pt-20 pb-16 text-center">
+          <p className="hero-rise text-[11px] font-semibold tracking-[0.35em] text-ivory-300 uppercase">
             Order of play · your season
           </p>
-          <h1 className="font-display max-w-2xl text-4xl font-semibold text-ivory-50 sm:text-5xl">
+          <h1
+            className="font-display hero-rise max-w-3xl text-5xl leading-[1.08] font-semibold text-ivory-50 sm:text-6xl"
+            style={{ animationDelay: "80ms" }}
+          >
             A tennis workout that fits{" "}
             <em className="relative inline-block not-italic">
               your
-              <span
-                aria-hidden="true"
-                className="absolute right-0 -bottom-1 left-0 h-1 rounded-full bg-optic-400"
-              />
+              <span aria-hidden="true" className="hero-underline absolute right-0 -bottom-1 left-0 h-1.5 rounded-full bg-optic-400" />
             </em>{" "}
             body, gear, and goals.
           </h1>
-          <p className="max-w-xl text-ivory-200">
+          <p className="hero-rise max-w-xl text-lg text-ivory-200" style={{ animationDelay: "160ms" }}>
             A free plan builder tuned for tennis players: pick your goals and equipment, get a
             weekly plan with a ramp-up schedule, and track it as you go.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="hero-rise flex flex-wrap items-center justify-center gap-3" style={{ animationDelay: "240ms" }}>
             <Link
               to="/build"
-              className="rounded-full bg-optic-400 px-6 py-3 font-semibold text-grass-950 transition hover:bg-optic-300"
+              className="rounded-full bg-optic-400 px-7 py-3.5 text-lg font-semibold text-grass-950 shadow-[0_0_0_0_rgba(217,242,79,0.4)] transition hover:-translate-y-0.5 hover:bg-optic-300 hover:shadow-[0_6px_24px_-4px_rgba(217,242,79,0.5)]"
             >
               Build my plan
             </Link>
             <a
               href="#gallery"
-              className="rounded-full border border-ivory-100/40 px-6 py-3 font-medium text-ivory-100 transition hover:border-ivory-100"
+              className="rounded-full border border-ivory-100/40 px-7 py-3.5 text-lg font-medium text-ivory-100 transition hover:border-optic-400 hover:text-optic-300"
             >
               Browse shared plans
             </a>
