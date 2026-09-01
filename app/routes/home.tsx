@@ -175,9 +175,13 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       <section className="pb-12">
         {yourPlans.length > 0 && (
           <>
-            <h2 className="font-display mb-4 text-2xl font-semibold text-grass-900 dark:text-ivory-100">
+            <h2 className="font-display mb-1 text-2xl font-semibold text-grass-900 dark:text-ivory-100">
               Your plans
             </h2>
+            <p className="mb-4 text-sm text-grass-700 dark:text-ivory-300">
+              Private to this device — nothing here is shared until you publish it from the
+              editor.
+            </p>
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {yourPlans.map((plan) => (
                 <li
