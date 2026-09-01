@@ -35,8 +35,9 @@ const PATHS: Record<string, ReactNode> = {
   ),
   device: (
     <>
-      <rect x="7" y="2" width="10" height="20" rx="2" />
-      <line x1="12" y1="18" x2="12" y2="18.01" />
+      <rect x="6.5" y="2" width="11" height="20" rx="2.5" />
+      <line x1="10" y1="18.5" x2="14" y2="18.5" />
+      <line x1="6.5" y1="6" x2="17.5" y2="6" />
     </>
   ),
   globe: (

@@ -178,13 +178,16 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             <div className="mb-1 flex items-center gap-2">
               <Icon name="device" size={18} />
               <h2 className="font-display text-2xl font-semibold text-grass-900 dark:text-ivory-100">
-                Your plans — on this device
+                Your plans
               </h2>
+              <span className="rounded-full bg-ivory-200 px-2 py-0.5 text-xs font-medium text-grass-700 dark:bg-grass-800 dark:text-ivory-300">
+                stored in this browser
+              </span>
             </div>
             <p className="mb-4 text-sm text-grass-700 dark:text-ivory-300">
-              These live only in this browser. They have no public link and don't appear in the
-              gallery or admin until you open one and hit{" "}
-              <strong>Publish &amp; get share link</strong>.
+              These are your private working copies. <strong>This device only</strong> = never
+              shared. <strong>Published</strong> = you've shared a snapshot to the gallery — your
+              local edits stay private until you publish again.
             </p>
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {yourPlans.map((plan) => (
